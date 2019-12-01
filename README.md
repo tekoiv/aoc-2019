@@ -1,0 +1,1 @@
+Advent of Code 2019. Going to focus on solving the puzzles with Java at first.

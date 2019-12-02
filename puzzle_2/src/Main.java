@@ -13,7 +13,7 @@ public class Main {
         calculateFinalState(opCodes);
         System.out.println("The answer for 2a): " + opCodes[0]);
         int[] nounAndVerb = calculateGivenOutput(19690720, opCodes2);
-        System.out.println("The answer for 2b): " + nounAndVerb[0] * nounAndVerb[1] * 100);
+        System.out.println("The answer for 2b): " + nounAndVerb[0] * 100 + nounAndVerb[1]);
     }
 
     static int[] calculateGivenOutput(int output, int[] opCodes) {

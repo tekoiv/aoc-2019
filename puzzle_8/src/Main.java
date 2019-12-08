@@ -4,10 +4,6 @@ import java.io.IOException;
 
 public class Main {
 
-    //public static final int TEST_HEIGHT = 2;
-    //public static final int TEST_WIDTH = 3;
-    //public static StringBuilder testData = new StringBuilder("123456789012");
-
     public static final int HEIGHT = 6;
     public static final int WIDTH = 25;
     public static StringBuilder data;
@@ -36,7 +32,6 @@ public class Main {
                 fewestZeroes = count;
             }
         }
-
         //1's and 2's
         int ones = 0;
         int twos = 0;
@@ -45,6 +40,30 @@ public class Main {
             else if(layers[layerWithFewestZeroesIndex].charAt(i) == '2') twos++;
         }
         System.out.println(ones * twos);
+
+        //part 2
+        readFile();
+        StringBuilder image = new StringBuilder();
+        int height = HEIGHT; int width = WIDTH;
+        int index = 0;
+        int currentIndex = 0;
+        while(index < height * width) {
+            if(data.charAt(currentIndex) == '0') {
+                image.append(' ');
+                index++;
+                currentIndex = index;
+            }
+            else if(data.charAt(currentIndex) == '1') {
+                image.append('#');
+                index++;
+                currentIndex = index;
+            } else currentIndex += width * height;
+        }
+        //print message
+        for(int i = 0; i < height; i++) {
+            System.out.println(image.substring(0, width));
+            image.delete(0, width);
+        }
     }
 
     static void readFile() {

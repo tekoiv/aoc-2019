@@ -33,12 +33,11 @@ public class Main {
                 }
                 else if(modeOne == '2') {
                     //input[relative_base + input[index + 1]] = inputInstruction
+                    //System.out.println(input.get(index + 1));
+                    //System.out.println(relativeBase);
                     i = relativeBase + Integer.parseInt(input.get(index + 1).toString());
                     input.set(i, inputInstruction);
-                } else {
-                    //doesn't go here, not possible
-                    i = Integer.parseInt(input.get(index + 1).toString());
-                    input.set(i, inputInstruction);
+                    //System.out.println(input.get(i));
                 }
                 index += 2;
             }
@@ -48,7 +47,8 @@ public class Main {
                     firstParameter = input.get(i);
                 }
                 else if(modeOne == '2') {
-                    firstParameter = input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString()));
+                    int i = relativeBase + Integer.parseInt(input.get(index + 1).toString());
+                    firstParameter = input.get(i);
                 } else firstParameter = input.get(index + 1);
 
                 if(opCode.substring(opCode.length() - 2).equals("04")) {
@@ -73,8 +73,7 @@ public class Main {
                 }
                 else if(modeTwo == '2') {
                     secondParameter = input.get(relativeBase + Integer.parseInt(input.get(index + 2).toString()));
-                }
-                else secondParameter = input.get(index + 2);
+                } else secondParameter = input.get(index + 2);
                 //different possibilities
                 if (opCode.substring(opCode.length() - 2).equals("05")) {
                     if(!firstParameter.toString().equals("0")) {
@@ -90,14 +89,26 @@ public class Main {
                     modeThree = opCode.charAt(0);
                     int i;
                     if(modeThree == '2') {
-                        i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 3).toString())).toString());
-                    } else i = Integer.parseInt(input.get(index + 3).toString());
+                        //i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 3).toString())).toString());
+                        i = relativeBase + Integer.parseInt(input.get(index + 3).toString());
+                    } else {
+                        i = Integer.parseInt(input.get(index + 3).toString());
+                    }
                     if(Long.parseLong(firstParameter.toString()) < Long.parseLong(secondParameter.toString())) input.get(i).replace(0, input.get(i).length(), "1");
                     else input.get(i).replace(0, input.get(i).length(), "0");
                     index += 4;
                 }
                 else if(opCode.substring(opCode.length() - 2).equals("08")) {
-                    int i = Integer.parseInt(input.get(index + 3).toString());
+                    modeThree = opCode.charAt(0);
+                    int i;
+                    if(modeThree == '2') {
+                        //i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 3).toString())).toString());
+                        i = relativeBase + Integer.parseInt(input.get(index + 3).toString());
+                    }
+                    else {
+                        //i = Integer.parseInt(input.get(Integer.parseInt(input.get(index + 3).toString())).toString());
+                        i = Integer.parseInt(input.get(index + 3).toString());
+                    }
                     if(firstParameter.toString().equals(secondParameter.toString())) input.get(i).replace(0, input.get(i).length(), "1");
                     else input.get(i).replace(0, input.get(i).length(), "0");
                     index += 4;
@@ -121,8 +132,10 @@ public class Main {
                 modeThree = opCode.charAt(0);
                 int i;
                 if(modeThree == '2') {
-                    i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 3).toString())).toString());
-                } else i = Integer.parseInt(input.get(index + 3).toString());
+                    i = relativeBase + Integer.parseInt(input.get(index + 3).toString());
+                } else {
+                    i = Integer.parseInt(input.get(index + 3).toString());
+                }
                 //possibilities
                 if(opCode.substring(opCode.length() - 2).equals("01")) {
                     long sum = Long.parseLong(firstParameter.toString()) + Long.parseLong(secondParameter.toString());
@@ -143,7 +156,7 @@ public class Main {
             BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_9.txt"));
             input = reader.readLine();
         } catch (IOException e) { System.out.println(e); }
-        //input = "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99";
+        //input = "104,1125899906842624,99";
         String[] array = input.split(",");
         StringBuilder[] sbArray = new StringBuilder[array.length];
         StringBuilder zero = new StringBuilder("0");
@@ -154,6 +167,7 @@ public class Main {
         for(int i = 0; i < sbArray.length; i++) {
             sbList.set(i, new StringBuilder(array[i]));
         }
-        runProgram(sbList, new StringBuilder("1"));
+        runProgram(sbList, new StringBuilder("5"));
     }
 }
+

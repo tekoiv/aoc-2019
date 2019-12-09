@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Main {
     //refactored intCodeComputer from puzzle 5
@@ -26,8 +25,21 @@ public class Main {
             modeOne = opCode.charAt(2);
             modeTwo = opCode.charAt(1);
             if(opCode.substring(opCode.length() - 2).equals("03")) {
-                int i = Integer.parseInt(input.get(index + 1).toString());
-                input.set(i, inputInstruction);
+                int i;
+                if(modeOne == '0') {
+                    //input[index + 1] = inputInstruction
+                    i = Integer.parseInt(input.get(index + 1).toString());
+                    input.set(i, inputInstruction);
+                }
+                else if(modeOne == '2') {
+                    //input[relative_base + input[index + 1]] = inputInstruction
+                    i = relativeBase + Integer.parseInt(input.get(index + 1).toString());
+                    input.set(i, inputInstruction);
+                } else {
+                    //doesn't go here, not possible
+                    i = Integer.parseInt(input.get(index + 1).toString());
+                    input.set(i, inputInstruction);
+                }
                 index += 2;
             }
             else if(opCode.substring(opCode.length() - 2).matches("04|09")) {
@@ -36,8 +48,6 @@ public class Main {
                     firstParameter = input.get(i);
                 }
                 else if(modeOne == '2') {
-                    //int i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString())).toString());
-                    //firstParameter = input.get(i);
                     firstParameter = input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString()));
                 } else firstParameter = input.get(index + 1);
 
@@ -55,8 +65,6 @@ public class Main {
                     firstParameter = input.get(i);
                 }
                 else if(modeOne == '2') {
-                    int i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString())).toString());
-                    firstParameter = input.get(i);
                     firstParameter = input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString()));
                 } else firstParameter = input.get(index + 1);
                 if(modeTwo == '0') {
@@ -64,8 +72,6 @@ public class Main {
                     secondParameter = input.get(i);
                 }
                 else if(modeTwo == '2') {
-                    int i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 2).toString())).toString());
-                    secondParameter = input.get(i);
                     secondParameter = input.get(relativeBase + Integer.parseInt(input.get(index + 2).toString()));
                 }
                 else secondParameter = input.get(index + 2);
@@ -103,8 +109,6 @@ public class Main {
                     firstParameter = input.get(i);
                 }
                 else if(modeOne == '2'){
-                    int i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString())).toString());
-                    firstParameter = input.get(i);
                     firstParameter = input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString()));
                 } else firstParameter = input.get(index + 1);
                 if(modeTwo == '0') {
@@ -112,8 +116,6 @@ public class Main {
                     secondParameter = input.get(i);
                 }
                 else if(modeTwo == '2') {
-                    int i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 2).toString())).toString());
-                    secondParameter = input.get(i);
                     secondParameter = input.get(relativeBase + Integer.parseInt(input.get(index + 2).toString()));
                 } else secondParameter = input.get(index + 2);
                 modeThree = opCode.charAt(0);
@@ -141,10 +143,14 @@ public class Main {
             BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_9.txt"));
             input = reader.readLine();
         } catch (IOException e) { System.out.println(e); }
-        input = "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99";
+        //input = "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99";
         String[] array = input.split(",");
         StringBuilder[] sbArray = new StringBuilder[array.length];
-        ArrayList<StringBuilder> sbList = new ArrayList<>(Collections.nCopies(100000, new StringBuilder("0")));
+        StringBuilder zero = new StringBuilder("0");
+        ArrayList<StringBuilder> sbList = new ArrayList<>();
+        for(int i = 0; i < 2000; i++) {
+            sbList.add(zero);
+        }
         for(int i = 0; i < sbArray.length; i++) {
             sbList.set(i, new StringBuilder(array[i]));
         }

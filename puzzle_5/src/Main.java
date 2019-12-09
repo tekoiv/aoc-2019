@@ -2,228 +2,108 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-/*
-This could be about 100 lines shorter. Got confused
-by the instructions and just tried to get this over with.
- */
-
 public class Main {
-    public static void main(String[] args){
-        // read file and set into a string array
-        String inputAsString = "";
-        String inputInstruction = "5";
+
+    //refactored intCodeComputer from puzzle 5
+    static void runProgram(StringBuilder[] input, StringBuilder inputInstruction) {
+        int index = 0;
+        char modeOne, modeTwo;
+        StringBuilder firstParameter;
+        StringBuilder secondParameter;
+        while (!input[index].toString().equals("99")) {
+            StringBuilder opCode = input[index];
+            int fillerZeros = 0;
+            if(opCode.length() < 5) fillerZeros = 5 - opCode.length();
+            for(int i = 0; i < fillerZeros; i++) {
+                //fast stringBuilder approach
+                opCode.reverse();
+                opCode.append("0");
+                opCode.reverse();
+            }
+            //modes
+            modeOne = opCode.charAt(2);
+            modeTwo = opCode.charAt(1);
+            if(opCode.substring(opCode.length() - 2).equals("03")) {
+                int i = Integer.parseInt(input[index + 1].toString());
+                input[i] = inputInstruction;
+                index += 2;
+            }
+            else if(opCode.substring(opCode.length() - 2).equals("04")) {
+                //special case
+                if(modeOne == '0') {
+                    int i = Integer.parseInt(input[index + 1].toString());
+                    System.out.println(input[i]);
+                } else System.out.println(input[index + 1]);
+                index += 2;
+            }
+            else if(opCode.substring(opCode.length() - 2).matches("05|06|07|08")) {
+                if(modeOne == '0') {
+                    int i = Integer.parseInt(input[index + 1].toString());
+                    firstParameter = input[i];
+                } else firstParameter = input[index + 1];
+                if(modeTwo == '0') {
+                    int i = Integer.parseInt(input[index + 2].toString());
+                    secondParameter = input[i];
+                } else secondParameter = input[index + 2];
+                //different possibilities
+                if (opCode.substring(opCode.length() - 2).equals("05")) {
+                    if(!firstParameter.toString().equals("0")) {
+                        index = Integer.parseInt(secondParameter.toString());
+                    } else index += 3;
+                }
+                else if(opCode.substring(opCode.length() - 2).equals("06")) {
+                    if(firstParameter.toString().equals("0")) {
+                        index = Integer.parseInt(secondParameter.toString());
+                    } else index += 3;
+                }
+                else if(opCode.substring(opCode.length() - 2).equals("07")) {
+                    int i = Integer.parseInt(input[index + 3].toString());
+                    if(Integer.parseInt(firstParameter.toString()) < Integer.parseInt(secondParameter.toString())) input[i].replace(0, input[i].length(), "1");
+                    else input[i].replace(0, input[i].length(), "0");
+                    index += 4;
+                }
+                else if(opCode.substring(opCode.length() - 2).equals("08")) {
+                    int i = Integer.parseInt(input[index + 3].toString());
+                    if(firstParameter.toString().equals(secondParameter.toString())) input[i].replace(0, input[i].length(), "1");
+                    else input[i].replace(0, input[i].length(), "0");
+                    index += 4;
+                }
+            }
+            else {
+                if(modeOne == '0') {
+                    int i = Integer.parseInt(input[index + 1].toString());
+                    firstParameter = input[i];
+                } else firstParameter = input[index + 1];
+                if(modeTwo == '0') {
+                    int i = Integer.parseInt(input[index + 2].toString());
+                    secondParameter = input[i];
+                } else secondParameter = input[index + 2];
+                int i = Integer.parseInt(input[index + 3].toString());
+                //possibilities
+                if(opCode.substring(opCode.length() - 2).equals("01")) {
+                    int sum = Integer.parseInt(firstParameter.toString()) + Integer.parseInt(secondParameter.toString());
+                    input[i].replace(0, input[i].length(), Integer.toString(sum));
+                }
+                else if(opCode.substring(opCode.length() - 2).equals("02")) {
+                    int product = Integer.parseInt(firstParameter.toString()) * Integer.parseInt(secondParameter.toString());
+                    input[i].replace(0, input[i].length(), Integer.toString(product));
+                }
+                index += 4;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        String input = "";
         try {
             BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_5.txt"));
-            inputAsString = reader.readLine();
-        } catch(IOException e) {
-            System.out.println(e);
+            input = reader.readLine();
+        } catch (IOException e) { System.out.println(e); }
+        String[] array = input.split(",");
+        StringBuilder[] sbArray = new StringBuilder[array.length];
+        for(int i = 0; i < sbArray.length; i++) {
+            sbArray[i] = new StringBuilder(array[i]);
         }
-        String[] input = inputAsString.split(",");
-        runProgram(input, inputInstruction);
-
-    }
-
-    static void runProgram(String[] input, String inputInstruction) {
-        int i = 0;
-        while(!input[i].equals("99")) {
-            //position modes
-            if(input[i].equals("3")) {
-                int index = toInt(input[i + 1]);
-                input[index] = inputInstruction;
-                i += 2;
-            }
-            else if(input[i].equals("4")) {
-                int index = toInt(input[i + 1]);
-                System.out.println(input[index]);
-                i += 2;
-            }
-            else if(input[i].equals("1")) {
-                int value1st, value2nd;
-                int index = toInt(input[i + 1]);
-                value1st = toInt(input[index]);
-                index = toInt(input[i + 2]);
-                value2nd = toInt(input[index]);
-                index = toInt(input[i + 3]);
-                input[index] = Integer.toString(value1st + value2nd);
-                i += 4;
-            }
-            else if(input[i].equals("2")) {
-                int value1st, value2nd;
-                int index = toInt(input[i + 1]);
-                value1st = toInt(input[index]);
-                index = toInt(input[i + 2]);
-                value2nd = toInt(input[index]);
-                index = toInt(input[i + 3]);
-                input[index] = Integer.toString(value1st * value2nd);
-                i += 4;
-            }
-            else if(input[i].equals("5")) {
-                int index = toInt(input[i + 1]);
-                int p1 = toInt(input[index]);
-                if(p1 != 0) {
-                    index = toInt(input[i + 2]);
-                    int p2 = toInt(input[index]);
-                    i = p2;
-                } else i += 3;
-            }
-            else if(input[i].equals("6")) {
-                int index = toInt(input[i + 1]);
-                int p1 = toInt(input[index]);
-                if(p1 == 0) {
-                    index = toInt(input[i + 2]);
-                    int p2 = toInt(input[index]);
-                    i = p2;
-                } else i += 3;
-            }
-            else if(input[i].equals("7")) {
-                int index = toInt(input[i + 1]);
-                int p1 = toInt(input[index]);
-                index = toInt(input[i + 2]);
-                int p2 = toInt(input[index]);
-                index = toInt(input[i + 3]);
-                if(p1 < p2) {
-                    input[index] = "1";
-                } else input[index] = "0";
-                i += 4;
-            }
-            else if(input[i].equals("8")) {
-                int index = toInt(input[i + 1]);
-                int p1 = toInt(input[index]);
-                index = toInt(input[i + 2]);
-                int p2 = toInt(input[index]);
-                index = toInt(input[i + 3]);
-                if(p1 == p2) {
-                    input[index] = "1";
-                } else input[index] = "0";
-                i += 4;
-            }
-            //immediate modes
-            else {
-                if(input[i].length() < 5) {
-                    int fillerZeros = 5 - input[i].length();
-                    for(int j = 0; j < fillerZeros; j++) {
-                        input[i] = "0" + input[i];
-                    }
-                }
-                char mode1st = input[i].charAt(2);
-                char mode2nd = input[i].charAt(1);
-                if(input[i].substring(input[i].length() - 2).equals("01")) {
-                    int index;
-                    int value1st;
-                    int value2nd;
-                    if(mode1st == '0') {
-                        index = toInt(input[i + 1]);
-                        value1st = toInt(input[index]);
-                    } else {
-                        value1st = toInt(input[i + 1]);
-                    }
-                    if(mode2nd == '0') {
-                        index = toInt(input[i + 2]);
-                        value2nd = toInt(input[index]);
-                    } else {
-                        value2nd = toInt(input[i + 2]);
-                    }
-                    index = toInt(input[i + 3]);
-                    input[index] = Integer.toString(value1st + value2nd);
-                    i += 4;
-                }
-                else if(input[i].substring(input[i].length() - 2).equals("02")) {
-                    int index;
-                    int value1st;
-                    int value2nd;
-                    if(mode1st == '0') {
-                        index = toInt(input[i + 1]);
-                        value1st = toInt(input[index]);
-                    } else {
-                        value1st = toInt(input[i + 1]);
-                    }
-                    if(mode2nd == '0') {
-                        index = toInt(input[i + 2]);
-                        value2nd = toInt(input[index]);
-                    } else {
-                        value2nd = toInt(input[i + 2]);
-                    }
-                    index = toInt(input[i + 3]);
-                    input[index] = Integer.toString(value1st * value2nd);
-                    i += 4;
-                }
-                else if(input[i].substring(input[i].length() - 2).equals("04")) {
-                    int index, p1;
-                    if(mode1st == '0') {
-                        index = toInt(input[i + 1]);
-                        p1 = toInt(input[index]);
-                    } else p1 = toInt(input[i + 1]);
-                    System.out.println(p1);
-                    i += 2;
-                }
-                else if(input[i].substring(input[i].length() - 2).equals("05")) {
-                    int index, p1, p2;
-                    if(mode1st == '0') {
-                        index = toInt(input[i + 1]);
-                        p1 = toInt(input[index]);
-                    } else p1 = toInt(input[i + 1]);
-                    if(p1 != 0) {
-                        if(mode2nd == '0') {
-                            index = toInt(input[i + 2]);
-                            p2 = toInt(input[index]);
-                        } else p2 = toInt(input[i + 2]);
-                        i = p2;
-                    } else i += 3;
-                }
-                else if(input[i].substring(input[i].length() - 2).equals("06")) {
-                    int index, p1, p2;
-                    if(mode1st == '0') {
-                        index = toInt(input[i + 1]);
-                        p1 = toInt(input[index]);
-                    } else p1 = toInt(input[i + 1]);
-                    if(p1 == 0) {
-                        if(mode2nd == '0') {
-                            index = toInt(input[i + 2]);
-                            p2 = toInt(input[index]);
-                        } else p2 = toInt(input[i + 2]);
-                        i = p2;
-                    } else i += 3;
-                }
-                else if(input[i].substring(input[i].length() - 2).equals("07")) {
-                    int index, p1, p2;
-                    if(mode1st == '0') {
-                        index = toInt(input[i + 1]);
-                        p1 = toInt(input[index]);
-                    } else p1 = toInt(input[i + 1]);
-                    if(mode2nd == '0') {
-                        index = toInt(input[i + 2]);
-                        p2 = toInt(input[index]);
-                    } else p2 = toInt(input[i + 2]);
-                    index = toInt(input[i + 3]);
-                    if(p1 < p2) {
-                        input[index] = "1";
-                    } else input[index] = "0";
-                    i += 4;
-                }
-                else if(input[i].substring(input[i].length() - 2).equals("08")) {
-                    int index, p1, p2;
-                    if(mode1st == '0') {
-                        index = toInt(input[i + 1]);
-                        p1 = toInt(input[index]);
-                    } else p1 = toInt(input[i + 1]);
-                    if(mode2nd == '0') {
-                        index = toInt(input[i + 2]);
-                        p2 = toInt(input[index]);
-                    } else p2 = toInt(input[i + 2]);
-                    index = toInt(input[i + 3]);
-                    if(p1 == p2) {
-                        input[index] = "1";
-                    } else input[index] = "0";
-                    i += 4;
-                }
-                else {
-                    System.out.println("This shouldn't happen. " + i);
-                }
-            }
-        }
-    }
-
-    static int toInt(String s) {
-        return Integer.parseInt(s);
+        runProgram(sbArray, new StringBuilder("5"));
     }
 }

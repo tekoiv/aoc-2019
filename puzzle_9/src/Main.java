@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Main {
     //refactored intCodeComputer from puzzle 5
@@ -35,12 +36,14 @@ public class Main {
                     firstParameter = input.get(i);
                 }
                 else if(modeOne == '2') {
-                    int i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString())).toString());
-                    firstParameter = input.get(i);
+                    //int i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString())).toString());
+                    //firstParameter = input.get(i);
+                    firstParameter = input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString()));
                 } else firstParameter = input.get(index + 1);
 
                 if(opCode.substring(opCode.length() - 2).equals("04")) {
                     System.out.println(firstParameter);
+                    if(firstParameter.toString().equals("99")) break;
                 } else {
                     relativeBase += Integer.parseInt(firstParameter.toString());
                 }
@@ -54,6 +57,7 @@ public class Main {
                 else if(modeOne == '2') {
                     int i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString())).toString());
                     firstParameter = input.get(i);
+                    firstParameter = input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString()));
                 } else firstParameter = input.get(index + 1);
                 if(modeTwo == '0') {
                     int i = Integer.parseInt(input.get(index + 2).toString());
@@ -62,6 +66,7 @@ public class Main {
                 else if(modeTwo == '2') {
                     int i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 2).toString())).toString());
                     secondParameter = input.get(i);
+                    secondParameter = input.get(relativeBase + Integer.parseInt(input.get(index + 2).toString()));
                 }
                 else secondParameter = input.get(index + 2);
                 //different possibilities
@@ -81,7 +86,7 @@ public class Main {
                     if(modeThree == '2') {
                         i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 3).toString())).toString());
                     } else i = Integer.parseInt(input.get(index + 3).toString());
-                    if(Integer.parseInt(firstParameter.toString()) < Integer.parseInt(secondParameter.toString())) input.get(i).replace(0, input.get(i).length(), "1");
+                    if(Long.parseLong(firstParameter.toString()) < Long.parseLong(secondParameter.toString())) input.get(i).replace(0, input.get(i).length(), "1");
                     else input.get(i).replace(0, input.get(i).length(), "0");
                     index += 4;
                 }
@@ -100,6 +105,7 @@ public class Main {
                 else if(modeOne == '2'){
                     int i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString())).toString());
                     firstParameter = input.get(i);
+                    firstParameter = input.get(relativeBase + Integer.parseInt(input.get(index + 1).toString()));
                 } else firstParameter = input.get(index + 1);
                 if(modeTwo == '0') {
                     int i = Integer.parseInt(input.get(index + 2).toString());
@@ -108,6 +114,7 @@ public class Main {
                 else if(modeTwo == '2') {
                     int i = Integer.parseInt(input.get(relativeBase + Integer.parseInt(input.get(index + 2).toString())).toString());
                     secondParameter = input.get(i);
+                    secondParameter = input.get(relativeBase + Integer.parseInt(input.get(index + 2).toString()));
                 } else secondParameter = input.get(index + 2);
                 modeThree = opCode.charAt(0);
                 int i;
@@ -116,12 +123,12 @@ public class Main {
                 } else i = Integer.parseInt(input.get(index + 3).toString());
                 //possibilities
                 if(opCode.substring(opCode.length() - 2).equals("01")) {
-                    int sum = Integer.parseInt(firstParameter.toString()) + Integer.parseInt(secondParameter.toString());
-                    input.get(i).replace(0, input.get(i).length(), Integer.toString(sum));
+                    long sum = Long.parseLong(firstParameter.toString()) + Long.parseLong(secondParameter.toString());
+                    input.get(i).replace(0, input.get(i).length(), Long.toString(sum));
                 }
                 else if(opCode.substring(opCode.length() - 2).equals("02")) {
-                    int product = Integer.parseInt(firstParameter.toString()) * Integer.parseInt(secondParameter.toString());
-                    input.get(i).replace(0, input.get(i).length(), Integer.toString(product));
+                    long product = Long.parseLong(firstParameter.toString()) * Long.parseLong(secondParameter.toString());
+                    input.get(i).replace(0, input.get(i).length(), Long.toString(product));
                 }
                 index += 4;
             }
@@ -131,16 +138,16 @@ public class Main {
     public static void main(String[] args) {
         String input = "";
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_5.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_9.txt"));
             input = reader.readLine();
         } catch (IOException e) { System.out.println(e); }
-        //input = "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99";
+        input = "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99";
         String[] array = input.split(",");
         StringBuilder[] sbArray = new StringBuilder[array.length];
-        ArrayList<StringBuilder> sbList = new ArrayList<>();
+        ArrayList<StringBuilder> sbList = new ArrayList<>(Collections.nCopies(100000, new StringBuilder("0")));
         for(int i = 0; i < sbArray.length; i++) {
-            sbList.add(new StringBuilder(array[i]));
+            sbList.set(i, new StringBuilder(array[i]));
         }
-        runProgram(sbList, new StringBuilder("5"));
+        runProgram(sbList, new StringBuilder("1"));
     }
 }

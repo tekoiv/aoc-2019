@@ -11,8 +11,8 @@ public class Main {
         char modeOne, modeTwo, modeThree;
         StringBuilder firstParameter;
         StringBuilder secondParameter;
+        //tests
         while (!input.get(index).toString().equals("99")) {
-            System.out.println("Relative base: " + relativeBase);
             StringBuilder opCode = input.get(index);
             int fillerZeros = 0;
             if(opCode.length() < 5) fillerZeros = 5 - opCode.length();
@@ -52,7 +52,16 @@ public class Main {
                 }
 
                 if(opCode.substring(opCode.length() - 2).equals("04")) {
-                    System.out.println(firstParameter);
+                    int nonZeroIndex = 0;
+                    if(firstParameter.length() > 0) {
+                        for(int i = 0; i < firstParameter.length(); i++) {
+                            if(firstParameter.charAt(i) != '0') {
+                                nonZeroIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    System.out.println(firstParameter.substring(nonZeroIndex));
                     if(firstParameter.toString().equals("99")) break;
                 } else {
                     relativeBase += Integer.parseInt(firstParameter.toString());
@@ -109,7 +118,9 @@ public class Main {
                     else {
                         i = Integer.parseInt(input.get(index + 3).toString());
                     }
-                    if(firstParameter.toString().equals(secondParameter.toString())) input.set(i, new StringBuilder("1"));
+                    if(firstParameter.toString().equals(secondParameter.toString())) {
+                        input.set(i, new StringBuilder("1"));
+                    }
                     else input.set(i, new StringBuilder("0"));
                     index += 4;
                 }
@@ -158,7 +169,7 @@ public class Main {
             BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_9.txt"));
             input = reader.readLine();
         } catch (IOException e) { System.out.println(e); }
-        //input = "104,1125899906842624,99";
+        //input = "3,3,1105,-1,9,1101,0,0,12,4,12,99,1";
         String[] array = input.split(",");
         StringBuilder[] sbArray = new StringBuilder[array.length];
         StringBuilder zero = new StringBuilder("0");
@@ -169,7 +180,7 @@ public class Main {
         for(int i = 0; i < sbArray.length; i++) {
             sbList.set(i, new StringBuilder(array[i]));
         }
-        runProgram(sbList, new StringBuilder("5"));
+        runProgram(sbList, new StringBuilder("1"));
     }
 }
 

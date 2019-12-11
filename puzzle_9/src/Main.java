@@ -11,9 +11,22 @@ public class Main {
         char modeOne, modeTwo, modeThree;
         StringBuilder firstParameter;
         StringBuilder secondParameter;
+        /*System.out.println(input.get(239) + "," + input.get(240) + "," + input.get(241));
+        System.out.println(input.get(40));
+        System.out.println(input.get(1024));*/
         //tests
         while (!input.get(index).toString().equals("99")) {
             StringBuilder opCode = input.get(index);
+            if(input.get(1024).toString().equals("40")) System.out.println(index);
+            //System.out.println("OpCode: " + opCode + " at index " + index + ". RelativeBase: " + relativeBase);
+            /*if(opCode.toString().equals("2105")){
+                System.out.println(input.get(index) + "," + input.get(index + 1) + "," + input.get(index + 2));
+                System.out.println(relativeBase);
+                System.out.println(input.get(relativeBase + Integer.parseInt(input.get(index + 2).toString())));
+            }*/
+            if(index == 213){
+                System.out.println("Code: " + input.get(index) + "," + input.get(index + 1) + "," + input.get(index + 2) + "," + input.get(index + 3) + " RelativeBase: " + relativeBase);
+            }
             int fillerZeros = 0;
             if(opCode.length() < 5) fillerZeros = 5 - opCode.length();
             for(int i = 0; i < fillerZeros; i++) {
@@ -62,7 +75,7 @@ public class Main {
                         }
                     }
                     System.out.println(firstParameter.substring(nonZeroIndex));
-                    if(firstParameter.toString().equals("99")) break;
+                    //if(firstParameter.toString().equals("99")) break;
                 } else {
                     relativeBase += Integer.parseInt(firstParameter.toString());
                 }
@@ -77,6 +90,7 @@ public class Main {
                     int i = relativeBase + Integer.parseInt(input.get(index + 1).toString());
                     firstParameter = input.get(i);
                 } else firstParameter = input.get(index + 1);
+
                 if(modeTwo == '0') {
                     int i = Integer.parseInt(input.get(index + 2).toString());
                     secondParameter = input.get(i);
@@ -149,14 +163,19 @@ public class Main {
                 } else {
                     i = Integer.parseInt(input.get(index + 3).toString());
                 }
+                /*if(i == 1024){
+                    System.out.println("Third parameter index is 1024. " + index);
+                    System.out.println("Code: " + input.get(index) + "," + input.get(index + 1) + "," + input.get(index + 2) + "," + input.get(index + 3));
+                    System.out.println("Product: " + Integer.parseInt(input.get(index + 1).toString())*Integer.parseInt(input.get(index + 2).toString()));
+                }*/
                 //possibilities
                 if(opCode.substring(opCode.length() - 2).equals("01")) {
                     long sum = Long.parseLong(firstParameter.toString()) + Long.parseLong(secondParameter.toString());
-                    input.get(i).replace(0, input.get(i).length(), Long.toString(sum));
+                    input.set(i, new StringBuilder(Long.toString(sum)));
                 }
                 else if(opCode.substring(opCode.length() - 2).equals("02")) {
                     long product = Long.parseLong(firstParameter.toString()) * Long.parseLong(secondParameter.toString());
-                    input.get(i).replace(0, input.get(i).length(), Long.toString(product));
+                    input.set(i, new StringBuilder(Long.toString(product)));
                 }
                 index += 4;
             }

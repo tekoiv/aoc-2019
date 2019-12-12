@@ -165,7 +165,7 @@ public class Main {
         for(int i = 0; i < sbArray.length; i++) {
             sbList.set(i, new StringBuilder(array[i]));
         }
-        runProgram(sbList, new StringBuilder("1"));
+        runProgram(sbList, new StringBuilder("0"));
     }
 }
 

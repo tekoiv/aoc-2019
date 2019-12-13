@@ -1,20 +1,47 @@
+import javax.swing.*;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Main {
+public class Main extends JFrame {
 
     static ArrayList<Integer> screen;
+    static char[][] screenMatrix;
+    static int part = 0;
 
     static void runProgram(ArrayList<StringBuilder> input, StringBuilder inputInstruction) {
         int index = 0;
         int relativeBase = 0;
         char modeOne, modeTwo, modeThree;
         screen = new ArrayList<>();
+        screen.clear();
         StringBuilder firstParameter;
         StringBuilder secondParameter;
-        while (!input.get(index).toString().equals("99")) {
+        Ball ball = new Ball("RD", 19, 18);
+        int paddle_x = 21;
+        final int paddle_y = 21;
+        char paddleDir;
+        while (!input.get(index).toString().equals("99") && blocksLeft()) {
+            if(part == 1) {
+                debugPrint();
+                ball.move(screenMatrix);
+                screenMatrix[paddle_x][paddle_y] = 'E';
+                if (paddle_x > ball.getX()) {
+                    paddleDir = 'L';
+                } else if (paddle_x < ball.getX()) {
+                    paddleDir = 'R';
+                } else paddleDir = 'N';
+                if (paddleDir == 'L') {
+                    inputInstruction = new StringBuilder("1");
+                    paddle_x--;
+                } else if (paddleDir == 'R') {
+                    inputInstruction = new StringBuilder("-1");
+                    paddle_x++;
+                } else inputInstruction = new StringBuilder("0");
+                screenMatrix[paddle_x][paddle_y] = 'H';
+            }
             StringBuilder opCode = input.get(index);
             int fillerZeros = 0;
             if(opCode.length() < 5) fillerZeros = 5 - opCode.length();
@@ -152,8 +179,18 @@ public class Main {
         }
     }
 
+    static boolean blocksLeft() {
+        if(part == 0) return true;
+        for(int i = 0; i < 23; i++) {
+            for(int j = 0; j < 42; j++) {
+                if(screenMatrix[j][i] == 'B') return true;
+            }
+        }
+        return false;
+    }
+
     static void drawAndPrintScreen(ArrayList<Integer> screen) {
-        char[][] screenMatrix = new char[42][23];
+        screenMatrix = new char[42][23];
         for(int i = 0; i < 23; i++) {
             for(int j = 0; j < 42; j++) {
                 screenMatrix[j][i] = ' ';
@@ -167,8 +204,14 @@ public class Main {
             if(tileId == 0) screenMatrix[x][y] = 'E';
             else if(tileId == 1) screenMatrix[x][y] = 'W';
             else if(tileId == 2) screenMatrix[x][y] = 'B';
-            else if(tileId == 3) screenMatrix[x][y] = 'H';
-            else screenMatrix[x][y] = 'P';
+            else if(tileId == 3) {
+                screenMatrix[x][y] = 'H';
+                System.out.println("Paddle starting position: (" + x + "," + y + ")");
+            }
+            else {
+                screenMatrix[x][y] = 'P';
+                System.out.println("Ball starting position: (" + x + "," + y + ")");
+            }
             index += 3;
         }
         //part 1
@@ -183,7 +226,31 @@ public class Main {
         System.out.println("Blocks: " + blockCounter);
     }
 
+    static void debugPrint() {
+        for(int i = 0; i < 23; i++) {
+            for(int j = 0; j < 42; j++) {
+                System.out.print(screenMatrix[j][i]);
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    static void printPoints() {
+        int index = 0;
+        int finalScore = 0;
+        while(index < screen.size() - 3) {
+            if(screen.get(index) == -1 && screen.get(index + 1) == 0) finalScore = screen.get(index + 2);
+            index += 3;
+        }
+        System.out.println(finalScore);
+    }
+
     public static void main(String[] args) {
+        //Visualization
+        final JFrame f = new JFrame("Visualization");
+        JPanel panel = new JPanel(new GridLayout(42, 23));
+
         String[] line = null;
         ArrayList<StringBuilder> input = new ArrayList<>();
         try {
@@ -196,7 +263,17 @@ public class Main {
             input.add(new StringBuilder("0"));
         }
         for(int i = 0; i < line.length; i++) input.set(i, new StringBuilder(line[i]));
+        ArrayList<StringBuilder> copyInput = (ArrayList<StringBuilder>) input.clone();
         runProgram(input, new StringBuilder("0"));
         drawAndPrintScreen(screen);
+        for(int i = 0; i < 23; i++) {
+            for(int j = 0; j < 42; j++) {
+
+            }
+        }
+        //drawAndPrintScreen(screen);
+        //part = 1;
+        //runProgram(copyInput, new StringBuilder("2"));
+        //printPoints();
     }
 }

@@ -25,29 +25,32 @@ public class Main extends JFrame {
         int paddle_x = 21;
         final int paddle_y = 21;
         char paddleDir;
-        // && blocksLeft()
-        while (!input.get(index).toString().equals("99")) {
+        while (!input.get(index).toString().equals("99") && blocksLeft()) {
             if(part == 1) {
-                //grid.repaint();
-                /*try {
+                grid.repaint();
+                try {
                     TimeUnit.MILLISECONDS.sleep(50);
                 } catch (InterruptedException e) {
                     System.out.println(e);
-                }*/
+                }
                 ball.move(screenMatrix);
                 screenMatrix[paddle_x][paddle_y] = 'E';
                 if (paddle_x > ball.getX()) {
                     paddleDir = 'L';
+                    inputInstruction = new StringBuilder("-1");
                 } else if (paddle_x < ball.getX()) {
                     paddleDir = 'R';
-                } else paddleDir = 'N';
+                    inputInstruction = new StringBuilder("1");
+                } else {
+                    paddleDir = 'N';
+                    inputInstruction = new StringBuilder("0");
+                }
+
                 if (paddleDir == 'L') {
                     paddle_x--;
                 } else if (paddleDir == 'R') {
                     paddle_x++;
                 }
-                if(ball.getDirection().charAt(0) == 'R') inputInstruction = new StringBuilder("1");
-                else inputInstruction = new StringBuilder("-1");
                 screenMatrix[paddle_x][paddle_y] = 'H';
             }
             StringBuilder opCode = input.get(index);
@@ -235,29 +238,9 @@ public class Main extends JFrame {
         System.out.println("Blocks: " + blockCounter);
     }
 
-    static void debugPrint() {
-        for(int i = 0; i < 23; i++) {
-            for(int j = 0; j < 42; j++) {
-                System.out.print(screenMatrix[j][i]);
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-
-    static void printPoints() {
-        int index = 0;
-        int finalScore = 0;
-        while(index < screen.size() - 3) {
-            if(screen.get(index) == -1 && screen.get(index + 1) == 0) finalScore = screen.get(index + 2);
-            index += 3;
-        }
-        System.out.println(finalScore);
-    }
-
     public static void main(String[] args) {
         //Visualization
-        //final JFrame f = new JFrame("Visualization");
+        final JFrame f = new JFrame("Visualization");
 
         String[] line = null;
         ArrayList<StringBuilder> input = new ArrayList<>();
@@ -275,14 +258,13 @@ public class Main extends JFrame {
         runProgram(input, new StringBuilder("0"));
         drawAndPrintScreen(screen);
         grid = new Grid(screenMatrix);
-        /*f.setBounds(0, 0, 43*15, 25*15);
+        f.setBounds(0, 0, 43*15, 25*15);
         f.setBackground(Color.BLACK);
         f.setVisible(true);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.add(grid);*/
+        f.add(grid);
         part = 1;
         copyInput.set(0, new StringBuilder("2"));
         runProgram(copyInput, new StringBuilder("0"));
-        printPoints();
     }
 }

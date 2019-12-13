@@ -20,6 +20,10 @@ public class Ball {
         return direction;
     }
 
+    private void setDirection(String dir) {
+        this.direction = dir;
+    }
+
     public void move(char[][] screenMatrix) {
         String currentDirection = this.direction;
         int currentX = this.x;
@@ -28,7 +32,7 @@ public class Ball {
         //right up possibilities
         if(currentDirection.equals("RU")) {
             if(screenMatrix[currentX + 1][currentY] == 'B' || screenMatrix[currentX + 1][currentY] == 'W') {
-                this.direction = "LU";
+                setDirection("LU");
                 if(screenMatrix[currentX + 1][currentY] == 'B') screenMatrix[currentX + 1][currentY] = 'E';
             }
             else if(screenMatrix[currentX][currentY - 1] == 'B' || screenMatrix[currentX][currentY - 1] == 'W') {
@@ -57,7 +61,7 @@ public class Ball {
                 this.direction = "RD";
                 if(screenMatrix[currentX - 1][currentY - 1] == 'B') screenMatrix[currentX - 1][currentY - 1] = 'E';
             } else {
-                this.x = currentX + 1;
+                this.x = currentX - 1;
                 this.y = currentY - 1;
             }
         }

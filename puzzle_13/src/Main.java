@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Main extends JFrame {
 
@@ -24,10 +25,15 @@ public class Main extends JFrame {
         int paddle_x = 21;
         final int paddle_y = 21;
         char paddleDir;
-        while (!input.get(index).toString().equals("99") && blocksLeft()) {
+        // && blocksLeft()
+        while (!input.get(index).toString().equals("99")) {
             if(part == 1) {
-                grid.repaint();
-                debugPrint();
+                //grid.repaint();
+                /*try {
+                    TimeUnit.MILLISECONDS.sleep(50);
+                } catch (InterruptedException e) {
+                    System.out.println(e);
+                }*/
                 ball.move(screenMatrix);
                 screenMatrix[paddle_x][paddle_y] = 'E';
                 if (paddle_x > ball.getX()) {
@@ -36,12 +42,12 @@ public class Main extends JFrame {
                     paddleDir = 'R';
                 } else paddleDir = 'N';
                 if (paddleDir == 'L') {
-                    inputInstruction = new StringBuilder("1");
                     paddle_x--;
                 } else if (paddleDir == 'R') {
-                    inputInstruction = new StringBuilder("-1");
                     paddle_x++;
-                } else inputInstruction = new StringBuilder("0");
+                }
+                if(ball.getDirection().charAt(0) == 'R') inputInstruction = new StringBuilder("1");
+                else inputInstruction = new StringBuilder("-1");
                 screenMatrix[paddle_x][paddle_y] = 'H';
             }
             StringBuilder opCode = input.get(index);
@@ -58,6 +64,7 @@ public class Main extends JFrame {
             modeThree = opCode.charAt(0);
             if(opCode.substring(opCode.length() - 2).equals("03")) {
                 int i;
+                System.out.println("Input! " + inputInstruction);
                 if(modeOne == '0') {
                     i = Integer.parseInt(input.get(index + 1).toString());
                 }
@@ -220,10 +227,10 @@ public class Main extends JFrame {
         int blockCounter = 0;
         for(int i = 0; i < 23; i++) {
             for(int j = 0; j < 42; j++) {
-                System.out.print(screenMatrix[j][i]);
+                //System.out.print(screenMatrix[j][i]);
                 if(screenMatrix[j][i] == 'B') blockCounter++;
             }
-            System.out.println();
+            //System.out.println();
         }
         System.out.println("Blocks: " + blockCounter);
     }
@@ -250,7 +257,7 @@ public class Main extends JFrame {
 
     public static void main(String[] args) {
         //Visualization
-        final JFrame f = new JFrame("Visualization");
+        //final JFrame f = new JFrame("Visualization");
 
         String[] line = null;
         ArrayList<StringBuilder> input = new ArrayList<>();
@@ -268,13 +275,14 @@ public class Main extends JFrame {
         runProgram(input, new StringBuilder("0"));
         drawAndPrintScreen(screen);
         grid = new Grid(screenMatrix);
-        f.setBounds(0, 0, 43*15, 25*15);
+        /*f.setBounds(0, 0, 43*15, 25*15);
         f.setBackground(Color.BLACK);
         f.setVisible(true);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.add(grid);
+        f.add(grid);*/
         part = 1;
-        runProgram(copyInput, new StringBuilder("2"));
-        //printPoints();
+        copyInput.set(0, new StringBuilder("2"));
+        runProgram(copyInput, new StringBuilder("0"));
+        printPoints();
     }
 }

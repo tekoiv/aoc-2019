@@ -12,13 +12,6 @@ public class Grid extends JPanel {
     public void paintComponent(Graphics g) {
 
         for(int i = 0; i < 23; i++) {
-            for(int j = 0 ; j < 42; j++){
-                System.out.print(this.screen[j][i]);
-            }
-            System.out.println();
-        }
-
-        for(int i = 0; i < 23; i++) {
             for(int j = 0; j < 42; j++) {
                 if(screen[j][i] == 'B') g.setColor(Color.WHITE);
                 else if(screen[j][i] == 'W') g.setColor(Color.BLUE);

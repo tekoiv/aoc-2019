@@ -10,6 +10,7 @@ public class Main extends JFrame {
     static ArrayList<Integer> screen;
     static char[][] screenMatrix;
     static int part = 0;
+    static Grid grid;
 
     static void runProgram(ArrayList<StringBuilder> input, StringBuilder inputInstruction) {
         int index = 0;
@@ -25,6 +26,7 @@ public class Main extends JFrame {
         char paddleDir;
         while (!input.get(index).toString().equals("99") && blocksLeft()) {
             if(part == 1) {
+                grid.repaint();
                 debugPrint();
                 ball.move(screenMatrix);
                 screenMatrix[paddle_x][paddle_y] = 'E';
@@ -249,7 +251,6 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         //Visualization
         final JFrame f = new JFrame("Visualization");
-        JPanel panel = new JPanel(new GridLayout(42, 23));
 
         String[] line = null;
         ArrayList<StringBuilder> input = new ArrayList<>();
@@ -266,14 +267,14 @@ public class Main extends JFrame {
         ArrayList<StringBuilder> copyInput = (ArrayList<StringBuilder>) input.clone();
         runProgram(input, new StringBuilder("0"));
         drawAndPrintScreen(screen);
-        for(int i = 0; i < 23; i++) {
-            for(int j = 0; j < 42; j++) {
-
-            }
-        }
-        //drawAndPrintScreen(screen);
-        //part = 1;
-        //runProgram(copyInput, new StringBuilder("2"));
+        grid = new Grid(screenMatrix);
+        f.setBounds(0, 0, 43*15, 25*15);
+        f.setBackground(Color.BLACK);
+        f.setVisible(true);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.add(grid);
+        part = 1;
+        runProgram(copyInput, new StringBuilder("2"));
         //printPoints();
     }
 }

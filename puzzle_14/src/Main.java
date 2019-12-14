@@ -3,90 +3,9 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    static int oreRequired = 0;
+    static int oreCounter = 0;
     static Map<String, Integer> requiredIngredients = new HashMap<>();
-
-    static int getOreRequired(Map<List<String>, String> recipes, List<String> key) {
-        //first is 2AB
-        key.forEach(ingredient -> {
-            List<String> nextKey = new ArrayList<>(getKeyByValue(recipes, ingredient)).get(0);
-            int requiredAmount = getAmount(ingredient);
-            //int providedAmount = getAmount(recipes.get(nextKey));
-            String currentIngredient = ingredient.substring(ingredient.indexOf(" ") + 1);
-
-            if(recipes.get(key).contains("FUEL")) {
-                requiredIngredients.put(currentIngredient, requiredAmount);
-                getOreRequired(recipes, nextKey);
-            } else {
-                String product = recipes.get(key).substring(recipes.get(key).indexOf(" ") + 1);
-                String ing = recipes.get(key);
-                if(requiredIngredients.containsKey(currentIngredient)){
-                    int originalValue = requiredIngredients.get(currentIngredient);
-                    requiredIngredients.put(currentIngredient, originalValue + (requiredIngredients.get(product)/getAmount(product))*getAmount(currentIngredient));
-                } else {
-                    requiredIngredients.put(currentIngredient, requiredIngredients.get(product)/getAmount(ing)*getAmount(ingredient));
-                }
-            }
-            if(nextKey.get(0).substring(nextKey.get(0).indexOf(" ") + 1).equals("ORE")) {
-                 String product = recipes.get(key).substring(recipes.get(0).indexOf(" ") + 1);
-                 int provided = getAmount(recipes.get(key));
-                 oreRequired += requiredIngredients.get(currentIngredient)/provided
-            } else getOreRequired(recipes, nextKey);
-        });
-        /*key.forEach(ingredient -> {
-            List<String> nextKey = new ArrayList<>(getKeyByValue(recipes, ingredient)).get(0);
-            int requiredAmount = getAmount(ingredient);
-            int providedAmount = getAmount(recipes.get(nextKey));
-            List<String> nextMultiplied = new ArrayList<>(multiplyIngredients(nextKey, requiredAmount, providedAmount));
-            String ingredientID = ingredient.substring(ingredient.indexOf(" ") + 1);
-            if(nextKey.get(0).substring(nextKey.get(0).indexOf(" ") + 1).equals("ORE")) {
-                int oreAmount = getAmount(nextMultiplied.get(0));
-                if(ingredientStorage.containsKey(ingredientID)) {
-                    if(ingredientStorage.get(ingredientID) < requiredAmount) {
-                        if(requiredAmount / providedAmount == 1) {
-                            oreRequired += oreAmount;
-                        }
-                        else {
-                            oreRequired += oreAmount;
-                            int originalValue = ingredientStorage.get(ingredientID);
-                            int leftoverMaterial = providedAmount % requiredAmount;
-                            ingredientStorage.put(ingredientID, originalValue + leftoverMaterial);
-                        }
-                    } else {
-                        int originalValue = ingredientStorage.get(ingredientID);
-                        ingredientStorage.put(ingredientID, originalValue - requiredAmount);
-                    }
-                }
-                else {
-                    if(requiredAmount / providedAmount == 1) {
-                        oreRequired += oreAmount;
-                    }
-                    else oreRequired += oreAmount;
-                    int leftoverMaterial = requiredAmount % providedAmount;
-                    ingredientStorage.put(ingredientID, leftoverMaterial);
-                }
-            }
-            else {
-                getOreRequired(recipes, nextKey);
-            }
-        });*/
-
-        return oreRequired;
-    }
-
-    static int getAmount(String recipe) {
-        return Integer.parseInt(recipe.substring(0, recipe.indexOf(" ")));
-    }
-
-    static List<String> multiplyIngredients(List<String> ingredients, int requiredAmount, int providedAmount) {
-        List<String> list = new ArrayList<>();
-        ingredients.forEach(ingredient -> {
-            String currentAmount = ingredient.substring(0, ingredient.indexOf(" "));
-            String multipliedAmount = Integer.toString(Integer.parseInt(currentAmount)*(requiredAmount / providedAmount));
-            list.add(multipliedAmount);
-        });
-        return list;
-    }
+    static Map<String, Integer> store = new HashMap<>();
 
     static <T, E> Set<T> getKeyByValue(Map<T, E> map, E value) {
         return map.entrySet()
@@ -94,6 +13,28 @@ public class Main {
                 .filter(entry -> entry.getValue().toString().substring(entry.getValue().toString().indexOf(" ") + 1).equals(value.toString().substring(value.toString().indexOf(" ") + 1)))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
+    }
+
+    static int makeMineral(Map<List<String>, String> recipeMap, String mineral, int qty) {
+        List<String> nextKey = new ArrayList<>(getKeyByValue(recipeMap, mineral)).get(0);
+        if(nextKey.get(0).substring(nextKey.get(0).indexOf(" ") + 1).equals("ORE")) {
+            int required = qty;
+            int provided = getAmount(recipeMap.get(nextKey));
+            oreCounter += (int) Math.ceil((required / provided) + 0.5) * getAmount(nextKey.get(0));
+            int manufacturedMinerals = (int) Math.ceil((required / provided) + 0.5) * getAmount(recipeMap.get(nextKey));
+            int leftoverMinerals = manufacturedMinerals - required;
+            if(store.containsKey(mineral)) {
+                int originalValue = store.get(mineral);
+                store.put(mineral, originalValue + leftoverMinerals);
+            } else {
+                store.put(mineral, leftoverMinerals);
+            }
+        }
+        return oreCounter;
+    }
+
+    static int getAmount(String s) {
+        return Integer.parseInt(s.substring(0, s.indexOf(" ")));
     }
 
     public static void main(String[] args) {
@@ -113,8 +54,7 @@ public class Main {
             recipeMap.put(key, value);
         });
         List<String> firstKey = new ArrayList<>(getKeyByValue(recipeMap, "1 FUEL")).get(0);
-        System.out.println(firstKey);
-        getOreRequired(recipeMap, firstKey);
-        //System.out.println(getOreRequired(recipeMap, firstKey));
+        System.out.println(makeMineral(recipeMap, "A", 9));
+        System.out.println(store.get("A"));
     }
 }

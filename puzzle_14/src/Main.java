@@ -1,14 +1,24 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
 
+    static int oreRequired = 0;
+
+    static int getOreRequired(Map<List<String>, String> recipes, List<String> key) {
+
+        return oreRequired;
+    }
+
+    static <T, E> Set<T> getKeyByValue(Map<T, E> map, E value) {
+        return map.entrySet()
+                .stream()
+                .filter(entry -> Objects.equals(entry.getValue(), value))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+    }
+
     public static void main(String[] args) {
-        /*
-        1. create hashMap(String[], String)
-        2. Find key String[] for FUEL
-        3. Pass contents of String[] to function
-        to create a recursive solution
-         */
         List<String> recipes = Arrays.asList(("10 ORE => 10 A\n" +
                 "1 ORE => 1 B\n" +
                 "7 A, 1 B => 1 C\n" +
@@ -28,5 +38,7 @@ public class Main {
             entry.getKey().forEach(str -> System.out.print(str + " "));
             System.out.println("Value:" + entry.getValue());
         });
+        List<String> firstKey = new ArrayList<>(getKeyByValue(recipeMap, "1 FUEL")).get(0);
+        System.out.println(firstKey);
     }
 }

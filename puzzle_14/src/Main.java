@@ -19,6 +19,20 @@ public class Main {
         List<String> nextKey = new ArrayList<>(getKeyByValue(recipeMap, mineral)).get(0);
         if(nextKey.get(0).substring(nextKey.get(0).indexOf(" ") + 1).equals("ORE")) {
             int required = qty;
+            if(store.containsKey(mineral)) {
+                if(store.get(mineral) >= required) {
+                    int originalValue = store.get(mineral);
+                    required -= originalValue;
+                    store.put(mineral, originalValue - required);
+                } else {
+                    int originalValue = store.get(mineral);
+                    required = qty - originalValue;
+                    store.put(mineral, 0);
+                }
+            }
+            else {
+                required = qty;
+            }
             int provided = getAmount(recipeMap.get(nextKey));
             oreCounter += (int) Math.ceil(required / 1.0 / provided) * getAmount(nextKey.get(0));
             int manufacturedMinerals = (int) Math.ceil(required / 1.0 / provided) * getAmount(recipeMap.get(nextKey));
@@ -46,14 +60,6 @@ public class Main {
                 } else {
                     makeMineral(recipeMap, ingredient.substring(ingredient.indexOf(" ") + 1), required);
                 }
-                /*
-                real required = required/provided * ingredient amount
-                if in storage => get ingredient from storage
-                if ingredient in storage > required => remove from storage
-                if ingredient in storage == required => minus
-                if ingredient in storage < required ingredient in storage 0 required = required - storage
-                make mineral
-                 */
             });
         }
         return oreCounter;
@@ -84,5 +90,6 @@ public class Main {
             makeMineral(recipeMap, ingredient, getAmount(ingredient));
             for(String s: store.keySet()) System.out.println("Mineral: " + s + " quantity: " + store.get(s));
         });
+        System.out.println("Total ore: " + oreCounter);
     }
 }

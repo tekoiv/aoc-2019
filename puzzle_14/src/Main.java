@@ -4,7 +4,6 @@ import java.util.stream.Collectors;
 public class Main {
 
     static int oreCounter = 0;
-    static Map<String, Integer> requiredIngredients = new HashMap<>();
     static Map<String, Integer> store = new HashMap<>();
 
     static <T, E> Set<T> getKeyByValue(Map<T, E> map, E value) {
@@ -42,7 +41,54 @@ public class Main {
             }
         }
         else {
+            int required = qty;
+            if(store.containsKey(mineral)) {
+                int originalValue = store.get(mineral);
+                if(originalValue >= required) {
+                    store.put(mineral, originalValue - required);
+                } else {
+                    required -= originalValue;
+                    store.put(mineral, 0);
+                }
+            }
+            int provided = getAmount(recipeMap.get(nextKey));
+            int manufacturedMinerals = (int) Math.ceil(required / 1.0 / provided) * getAmount(recipeMap.get(nextKey));
+            int leftoverMinerals = manufacturedMinerals - required;
+            if(store.containsKey(mineral)) {
+                int originalValue = store.get(mineral);
+                store.put(mineral, originalValue + leftoverMinerals);
+            } else {
+                store.put(mineral, leftoverMinerals);
+            }
+            int finalRequired = required;
             nextKey.forEach(ingredient -> {
+                makeMineral(recipeMap, ingredient.substring(ingredient.indexOf(" ") + 1), getAmount(ingredient) * (int) Math.ceil(finalRequired / 1.0 / provided));
+            });
+            /*
+            nextKey.forEach(ingredient -> {
+                int required = qty;
+                if(store.containsKey(mineral)) {
+                    int originalValue = store.get(mineral);
+
+                    if(store.get(mineral) >= required) {
+                        store.put(mineral, originalValue - required);
+                    } else {
+                        required -= originalValue;
+                        store.put(mineral, 0);
+                    }
+                }
+                int provided = getAmount(recipeMap.get(nextKey));
+                int manufacturedMinerals = (int) Math.ceil(required / 1.0 / provided) * getAmount(recipeMap.get(nextKey));
+                int leftoverMinerals = manufacturedMinerals - required;
+                if(store.containsKey(mineral)) {
+                    int originalValue = store.get(mineral);
+                    store.put(mineral, originalValue + leftoverMinerals);
+                } else {
+                    store.put(mineral, leftoverMinerals);
+                }
+                makeMineral(recipeMap, ingredient.substring(ingredient.indexOf(" ") + 1), getAmount(ingredient) * (int) Math.ceil(required / 1.0 / provided));
+
+                /*
                 int required = (int) Math.ceil(qty / 1.0 / getAmount(recipeMap.get(nextKey))) * getAmount(ingredient);
                 List<String> key = new ArrayList<>(getKeyByValue(recipeMap, ingredient)).get(0);
                 int provided = getAmount(recipeMap.get(key));
@@ -64,7 +110,8 @@ public class Main {
                     store.put(ingID, leftoverMaterials);
                     makeMineral(recipeMap, ingID, required);
                 }
-            });
+            */
+           // });
         }
         return oreCounter;
     }
@@ -82,6 +129,19 @@ public class Main {
                 "5 B, 7 C => 1 BC\n" +
                 "4 C, 1 A => 1 CA\n" +
                 "2 AB, 3 BC, 4 CA => 1 FUEL").split("\n"));*/
+        //test case 2
+        /*List<String> recipes = Arrays.asList(("2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG\n" +
+                "17 NVRVD, 3 JNWZP => 8 VPVL\n" +
+                "53 STKFG, 6 MNCFX, 46 VJHF, 81 HVMC, 68 CXFTF, 25 GNMV => 1 FUEL\n" +
+                "22 VJHF, 37 MNCFX => 5 FWMGM\n" +
+                "139 ORE => 4 NVRVD\n" +
+                "144 ORE => 7 JNWZP\n" +
+                "5 MNCFX, 7 RFSQX, 2 FWMGM, 2 VPVL, 19 CXFTF => 3 HVMC\n" +
+                "5 VJHF, 7 MNCFX, 9 VPVL, 37 CXFTF => 6 GNMV\n" +
+                "145 ORE => 6 MNCFX\n" +
+                "1 NVRVD => 8 CXFTF\n" +
+                "1 VJHF, 6 MNCFX => 4 RFSQX\n" +
+                "176 ORE => 6 VJHF").split("\n"));*/
         List<String> recipes = Arrays.asList(("2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG\n" +
                 "17 NVRVD, 3 JNWZP => 8 VPVL\n" +
                 "53 STKFG, 6 MNCFX, 46 VJHF, 81 HVMC, 68 CXFTF, 25 GNMV => 1 FUEL\n" +
@@ -106,7 +166,9 @@ public class Main {
         firstKey.forEach(ingredient -> {
             makeMineral(recipeMap, ingredient.substring(ingredient.indexOf(" ") + 1), getAmount(ingredient));
             for(String s: store.keySet()) System.out.println("Mineral: " + s + " quantity: " + store.get(s));
+            System.out.println();
         });
+        //System.out.println(makeMineral(recipeMap, "STKFG", 53));
         System.out.println("Total ore: " + oreCounter);
     }
 }

@@ -20,8 +20,8 @@ public class Main {
         if(nextKey.get(0).substring(nextKey.get(0).indexOf(" ") + 1).equals("ORE")) {
             int required = qty;
             int provided = getAmount(recipeMap.get(nextKey));
-            oreCounter += (int) Math.ceil((required / provided) + 0.5) * getAmount(nextKey.get(0));
-            int manufacturedMinerals = (int) Math.ceil((required / provided) + 0.5) * getAmount(recipeMap.get(nextKey));
+            oreCounter += (int) Math.ceil(required / provided / 1.0) * getAmount(nextKey.get(0));
+            int manufacturedMinerals = (int) Math.ceil(required / provided / 1.0) * getAmount(recipeMap.get(nextKey));
             int leftoverMinerals = manufacturedMinerals - required;
             if(store.containsKey(mineral)) {
                 int originalValue = store.get(mineral);
@@ -29,6 +29,32 @@ public class Main {
             } else {
                 store.put(mineral, leftoverMinerals);
             }
+        }
+        else {
+            nextKey.forEach(ingredient -> {
+                int required = (int) Math.ceil(qty / getAmount(recipeMap.get(nextKey)) / 1.0) * getAmount(ingredient);
+                if(store.containsKey(ingredient)) {
+                    if(store.get(ingredient) >= required) {
+                        int originalValue = store.get(ingredient);
+                        store.put(ingredient, originalValue - required);
+                    }
+                    else {
+                        int originalValue = store.get(ingredient);
+                        store.put(ingredient, 0);
+                        makeMineral(recipeMap, ingredient, required - originalValue);
+                    }
+                } else {
+                    makeMineral(recipeMap, ingredient.substring(ingredient.indexOf(" ") + 1), required);
+                }
+                /*
+                real required = required/provided * ingredient amount
+                if in storage => get ingredient from storage
+                if ingredient in storage > required => remove from storage
+                if ingredient in storage == required => minus
+                if ingredient in storage < required ingredient in storage 0 required = required - storage
+                make mineral
+                 */
+            });
         }
         return oreCounter;
     }
@@ -54,7 +80,8 @@ public class Main {
             recipeMap.put(key, value);
         });
         List<String> firstKey = new ArrayList<>(getKeyByValue(recipeMap, "1 FUEL")).get(0);
-        System.out.println(makeMineral(recipeMap, "A", 9));
-        System.out.println(store.get("A"));
+        System.out.println((int) Math.ceil(8/1.0/3));
+        System.out.println(makeMineral(recipeMap, "AB", 2));
+        System.out.println(store.get("AB"));
     }
 }

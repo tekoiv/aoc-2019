@@ -9,6 +9,8 @@ public class Main {
 
     /*
     This took way longer than I'd like to admit. I like the solution though.
+    Part b could be way faster with some numeric search algorithms
+    but this solution is quite speedy as well.
      */
 
     static BigInteger oreCounter = new BigInteger("0");

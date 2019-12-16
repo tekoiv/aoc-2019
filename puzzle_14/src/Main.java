@@ -1,7 +1,14 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
+
+    /*
+    This took way longer than I'd like to admit. I like the solution though.
+     */
 
     static int oreCounter = 0;
     static Map<String, Integer> store = new HashMap<>();
@@ -74,7 +81,7 @@ public class Main {
                 "1 NVRVD => 8 CXFTF\n" +
                 "1 VJHF, 6 MNCFX => 4 RFSQX\n" +
                 "176 ORE => 6 VJHF").split("\n"));*/
-        List<String> recipes = Arrays.asList(("171 ORE => 8 CNZTR\n" +
+        /*List<String> recipes = Arrays.asList(("171 ORE => 8 CNZTR\n" +
                 "7 ZLQW, 3 BMBT, 9 XCVML, 26 XMNCP, 1 WPTQ, 2 MZWV, 1 RJRHP => 4 PLWSL\n" +
                 "114 ORE => 4 BHXH\n" +
                 "14 VRPVC => 6 BMBT\n" +
@@ -90,7 +97,19 @@ public class Main {
                 "3 BHXH, 2 VRPVC => 7 MZWV\n" +
                 "121 ORE => 7 VRPVC\n" +
                 "7 XCVML => 6 RJRHP\n" +
-                "5 BHXH, 4 VRPVC => 5 LTCX").split("\n"));
+                "5 BHXH, 4 VRPVC => 5 LTCX").split("\n"));*/
+        List<String> recipes = new ArrayList<>();
+        String line;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_14.txt"));
+            line = reader.readLine();
+            while(line != null) {
+                recipes.add(line);
+                line = reader.readLine();
+            }
+        } catch(IOException e) {
+            System.out.println(e);
+        }
         recipes.forEach(recipe -> System.out.println(recipe));
         Map<List<String>, String> recipeMap = new HashMap<>();
         recipes.forEach(recipe -> {

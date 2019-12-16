@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -10,8 +11,10 @@ public class Main {
     This took way longer than I'd like to admit. I like the solution though.
      */
 
-    static int oreCounter = 0;
+    static BigInteger oreCounter = new BigInteger("0");
     static Map<String, Integer> store = new HashMap<>();
+    static final BigInteger MAX_ORE = new BigInteger("1000000000000");
+    static  long maxFuel = 0;
 
     static <T, E> Set<T> getKeyByValue(Map<T, E> map, E value) {
         return map.entrySet()
@@ -21,7 +24,7 @@ public class Main {
                 .collect(Collectors.toSet());
     }
 
-    static int makeMineral(Map<List<String>, String> recipeMap, String mineral, int qty) {
+    static BigInteger makeMineral(Map<List<String>, String> recipeMap, String mineral, int qty) {
         List<String> nextKey = new ArrayList<>(getKeyByValue(recipeMap, mineral)).get(0);
         int required = qty;
         if (store.containsKey(mineral)) {
@@ -34,9 +37,11 @@ public class Main {
                 store.put(mineral, 0);
             }
         }
+
         int provided = getAmount(recipeMap.get(nextKey));
         int manufacturedMinerals = (int) Math.ceil(required / 1.0 / provided) * getAmount(recipeMap.get(nextKey));
         int leftoverMinerals = manufacturedMinerals - required;
+
         if (store.containsKey(mineral)) {
             int originalValue = store.get(mineral);
             store.put(mineral, originalValue + leftoverMinerals);
@@ -45,7 +50,8 @@ public class Main {
         }
 
         if (nextKey.get(0).substring(nextKey.get(0).indexOf(" ") + 1).equals("ORE")) {
-            oreCounter += (int) Math.ceil(required / 1.0 / provided) * getAmount(nextKey.get(0));
+            //oreCounter += (int) Math.ceil(required / 1.0 / provided) * getAmount(nextKey.get(0));
+            oreCounter = oreCounter.add(new BigInteger(Integer.toString((int) Math.ceil(required / 1.0 / provided) * getAmount(nextKey.get(0)))));
         } else {
             int finalRequired = required;
             nextKey.forEach(ingredient -> {
@@ -59,6 +65,23 @@ public class Main {
         return Integer.parseInt(s.substring(0, s.indexOf(" ")));
     }
 
+    static int maxFuel(Map<List<String>, String> recipeMap) {
+        List<String> firstKey = new ArrayList<>(getKeyByValue(recipeMap, "1 FUEL")).get(0);
+        int fuelAmount = 5586000;
+        while(true) {
+            System.out.println(fuelAmount);
+            System.out.println(oreCounter);
+            oreCounter = new BigInteger("0");
+            final int finalFuelAmount = fuelAmount;
+            firstKey.forEach(ingredient -> makeMineral(recipeMap, ingredient.substring(ingredient.indexOf(" ") + 1), getAmount(ingredient) * finalFuelAmount));
+            if(oreCounter.compareTo(MAX_ORE) == -1) {
+                maxFuel = fuelAmount;
+                fuelAmount++;
+            }
+            else return fuelAmount;
+        }
+    }
+
     public static void main(String[] args) {
         //test case 1
         /*List<String> recipes = Arrays.asList(("9 ORE => 2 A\n" +
@@ -69,7 +92,7 @@ public class Main {
                 "4 C, 1 A => 1 CA\n" +
                 "2 AB, 3 BC, 4 CA => 1 FUEL").split("\n"));*/
         //test case 2
-        /*List<String> recipes = Arrays.asList(("2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG\n" +
+        List<String> recipes = Arrays.asList(("2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG\n" +
                 "17 NVRVD, 3 JNWZP => 8 VPVL\n" +
                 "53 STKFG, 6 MNCFX, 46 VJHF, 81 HVMC, 68 CXFTF, 25 GNMV => 1 FUEL\n" +
                 "22 VJHF, 37 MNCFX => 5 FWMGM\n" +
@@ -80,7 +103,7 @@ public class Main {
                 "145 ORE => 6 MNCFX\n" +
                 "1 NVRVD => 8 CXFTF\n" +
                 "1 VJHF, 6 MNCFX => 4 RFSQX\n" +
-                "176 ORE => 6 VJHF").split("\n"));*/
+                "176 ORE => 6 VJHF").split("\n"));
         /*List<String> recipes = Arrays.asList(("171 ORE => 8 CNZTR\n" +
                 "7 ZLQW, 3 BMBT, 9 XCVML, 26 XMNCP, 1 WPTQ, 2 MZWV, 1 RJRHP => 4 PLWSL\n" +
                 "114 ORE => 4 BHXH\n" +
@@ -98,7 +121,7 @@ public class Main {
                 "121 ORE => 7 VRPVC\n" +
                 "7 XCVML => 6 RJRHP\n" +
                 "5 BHXH, 4 VRPVC => 5 LTCX").split("\n"));*/
-        List<String> recipes = new ArrayList<>();
+        /*List<String> recipes = new ArrayList<>();
         String line;
         try {
             BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_14.txt"));
@@ -109,7 +132,10 @@ public class Main {
             }
         } catch(IOException e) {
             System.out.println(e);
-        }
+        }*/
+        BigInteger a = new BigInteger("1");
+        a = a.add(new BigInteger("20"));
+        System.out.println(a);
         recipes.forEach(recipe -> System.out.println(recipe));
         Map<List<String>, String> recipeMap = new HashMap<>();
         recipes.forEach(recipe -> {
@@ -119,12 +145,8 @@ public class Main {
             recipeMap.put(key, value);
         });
         List<String> firstKey = new ArrayList<>(getKeyByValue(recipeMap, "1 FUEL")).get(0);
-        firstKey.forEach(ingredient -> {
-            makeMineral(recipeMap, ingredient.substring(ingredient.indexOf(" ") + 1), getAmount(ingredient));
-            for (String s : store.keySet()) System.out.println("Mineral: " + s + " quantity: " + store.get(s));
-            System.out.println();
-        });
-        //System.out.println(makeMineral(recipeMap, "STKFG", 53));
+        firstKey.forEach(ingredient -> makeMineral(recipeMap, ingredient.substring(ingredient.indexOf(" ") + 1), getAmount(ingredient)));
         System.out.println("Total ore: " + oreCounter);
+        //System.out.println(maxFuel(recipeMap));
     }
 }

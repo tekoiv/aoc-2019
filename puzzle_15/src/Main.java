@@ -60,13 +60,15 @@ public class Main {
                         }
                     }
                     if(firstParameter.substring(nonZeroIndex).equals("0")) {
+                        droid.addWall(Integer.parseInt(inputInstruction.toString()));
                         if(Integer.parseInt(inputInstruction.toString()) < 4) {
-                            Integer.toString(Integer.parseInt(inputInstruction.toString()) + 1);
+                            inputInstruction = new StringBuilder(Integer.toString(Integer.parseInt(inputInstruction.toString()) + 1));
                         } else inputInstruction = new StringBuilder("0");
                     }
                     else if(firstParameter.substring(nonZeroIndex).equals("1")) {
                         droid.moveDroid(Integer.parseInt(inputInstruction.toString()));
                         inputInstruction = new StringBuilder("1");
+                        droid.printWallsAndPoints();
                     }
                     else if(firstParameter.substring(nonZeroIndex).equals("2")) {
                         droid.moveDroid(Integer.parseInt(inputInstruction.toString()));

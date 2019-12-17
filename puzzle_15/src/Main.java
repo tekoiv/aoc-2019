@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Main {
     //refactored intCodeComputer from puzzle 5
     static void runProgram(ArrayList<StringBuilder> input, StringBuilder inputInstruction) {
-        Droid droid = new Droid(0, 0);
+        Droid droid = new Droid(0, 0, 4);
         int index = 0;
         int relativeBase = 0;
         char modeOne, modeTwo, modeThree;
@@ -61,19 +61,59 @@ public class Main {
                     }
                     if(firstParameter.substring(nonZeroIndex).equals("0")) {
                         droid.addWall(Integer.parseInt(inputInstruction.toString()));
-                        if(Integer.parseInt(inputInstruction.toString()) < 4) {
-                            inputInstruction = new StringBuilder(Integer.toString(Integer.parseInt(inputInstruction.toString()) + 1));
-                        } else inputInstruction = new StringBuilder("0");
+                        if(droid.getDir() == 4) {
+                            if(inputInstruction.toString().equals("2")) {
+                                inputInstruction = new StringBuilder("4");
+                            } else if(inputInstruction.toString().equals("4")) {
+                                inputInstruction = new StringBuilder("1");
+                            } else if(inputInstruction.toString().equals("1")) {
+                                inputInstruction = new StringBuilder("3");
+                            }
+                        } else if(droid.getDir() == 3) {
+                            if(inputInstruction.toString().equals("1")) {
+                                inputInstruction = new StringBuilder("3");
+                            } else if(inputInstruction.toString().equals("3")) {
+                                inputInstruction = new StringBuilder("2");
+                            }
+                            else if(inputInstruction.toString().equals("2")) {
+                                inputInstruction = new StringBuilder("4");
+                            }
+                        } else if(droid.getDir() == 2) {
+                            if(inputInstruction.toString().equals("3")) {
+                                inputInstruction = new StringBuilder("2");
+                            } else if(inputInstruction.toString().equals("2")) {
+                                inputInstruction = new StringBuilder("4");
+                            } else if(inputInstruction.toString().equals("4")) {
+                                inputInstruction = new StringBuilder("1");
+                            }
+                        } else if(droid.getDir() == 1) {
+                            if(inputInstruction.toString().equals("4")) {
+                                inputInstruction = new StringBuilder("1");
+                            } else if(inputInstruction.toString().equals("1")) {
+                                inputInstruction = new StringBuilder("3");
+                            } else if(inputInstruction.toString().equals("3")) {
+                                inputInstruction = new StringBuilder("2");
+                            }
+                        }
                     }
                     else if(firstParameter.substring(nonZeroIndex).equals("1")) {
                         droid.moveDroid(Integer.parseInt(inputInstruction.toString()));
-                        inputInstruction = new StringBuilder("1");
+                        droid.setDir(Integer.parseInt(inputInstruction.toString()));
+                        if(droid.getDir() == 4) inputInstruction = new StringBuilder("2");
+                        else if(droid.getDir() == 3) inputInstruction = new StringBuilder("1");
+                        else if(droid.getDir() == 2) inputInstruction = new StringBuilder("3");
+                        else if(droid.getDir() == 1) inputInstruction = new StringBuilder("4");
                         droid.printWallsAndPoints();
                     }
                     else if(firstParameter.substring(nonZeroIndex).equals("2")) {
+                        droid.setDir(Integer.parseInt(inputInstruction.toString()));
+                        if(droid.getDir() == 4) inputInstruction = new StringBuilder("2");
+                        else if(droid.getDir() == 3) inputInstruction = new StringBuilder("1");
+                        else if(droid.getDir() == 2) inputInstruction = new StringBuilder("3");
+                        else if(droid.getDir() == 1) inputInstruction = new StringBuilder("4");
                         droid.moveDroid(Integer.parseInt(inputInstruction.toString()));
-                        //draw map
-                        break;
+                        droid.setTankLocation();
+                        System.out.println("FOUND");
                     }
                     //System.out.println(firstParameter.substring(nonZeroIndex));
                 } else {
@@ -181,7 +221,7 @@ public class Main {
         for(int i = 0; i < sbArray.length; i++) {
             sbList.set(i, new StringBuilder(array[i]));
         }
-        runProgram(sbList, new StringBuilder("1"));
+        runProgram(sbList, new StringBuilder("2"));
     }
 }
 

@@ -9,10 +9,19 @@ public class Droid {
     ArrayList<int[]> droidPoints = new ArrayList<>();
     ArrayList<int[]> walls = new ArrayList<>();
     int[] tankLocation;
+    int[] robot;
     public Droid(int x, int y, int dir) {
         this.x = x;
         this.y = y;
         this.dir = dir;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public void setDir(int dir) {
@@ -52,17 +61,7 @@ public class Droid {
         if(!isFound.get()) walls.add(wallCoordinate);
     }
 
-    public void printWallsAndPoints() {
-        /*System.out.print("Walls: ");
-        walls.forEach(wall -> {
-            System.out.print(wall[0] + "," + wall[1] + " ");
-        });
-        System.out.println();
-        System.out.print("Points: ");
-        droidPoints.forEach(point -> {
-            System.out.print(point[0] + "," + point[1] + " ");
-        });
-        System.out.println();*/
+    public void printMaze() {
         int[] offset = getOffset();
         List<int[]> pointsWithOffset = new ArrayList<>();
         List<int[]> wallsWithOffset = new ArrayList<>();
@@ -72,20 +71,14 @@ public class Droid {
         for(int[] w: walls) {
             wallsWithOffset.add(new int[]{w[0] + offset[0], w[1] + offset[1]});
         }
-        int[] robotWithOffset = {this.x + offset[0], this.y + offset[1]};
-        //pointsWithOffset.forEach(point -> System.out.print(point[0] + "," + point[1] + " "));
-        System.out.println();
-        printMaze(pointsWithOffset, wallsWithOffset, robotWithOffset);
-    }
-
-    private void printMaze(List<int[]> points, List<int[]> walls, int[] robot) {
+        robot = new int[]{this.x + offset[0], this.y + offset[1]};
         int largestX = 0;
         int largestY = 0;
-        for(int[] p: points) {
+        for(int[] p: pointsWithOffset) {
             if (p[0] > largestX) largestX = p[0];
             if (p[1] > largestY) largestY = p[1];
         }
-        for(int[] w: walls) {
+        for(int[] w: wallsWithOffset) {
             if(w[0] > largestX) largestX = w[0];
             if(w[1] > largestY) largestY = w[1];
         }
@@ -93,15 +86,16 @@ public class Droid {
         for(int i = 0; i < largestY + 1; i++){
             for(int j = 0; j < largestX + 1; j++) {
                 visualMap[j][i] = ' ';
-                for(int[] p: points) {
+                for(int[] p: pointsWithOffset) {
                     if(p[0] == j && p[1] == i) visualMap[j][i] = '.';
                 }
-                for(int[] w: walls) {
+                for(int[] w: wallsWithOffset) {
                     if(w[0] == j && w[1] == i) visualMap[j][i] = '#';
                 }
             }
         }
         visualMap[robot[0]][robot[1]] = 'R';
+        visualMap[tankLocation[0] + offset[0]][tankLocation[1] + offset[1]] = 'T';
         for(int i = 0; i < largestY + 1; i++) {
             for(int j = 0; j < largestX + 1; j++) {
                 System.out.print(visualMap[j][i]);

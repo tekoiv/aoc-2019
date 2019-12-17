@@ -98,24 +98,28 @@ public class Main {
                     }
                     else if(firstParameter.substring(nonZeroIndex).equals("1")) {
                         droid.moveDroid(Integer.parseInt(inputInstruction.toString()));
+                        if(droid.getX() == 0 && droid.getY() == 0) {
+                            droid.printMaze();
+                            break;
+                        }
                         droid.setDir(Integer.parseInt(inputInstruction.toString()));
                         if(droid.getDir() == 4) inputInstruction = new StringBuilder("2");
                         else if(droid.getDir() == 3) inputInstruction = new StringBuilder("1");
                         else if(droid.getDir() == 2) inputInstruction = new StringBuilder("3");
                         else if(droid.getDir() == 1) inputInstruction = new StringBuilder("4");
-                        droid.printWallsAndPoints();
                     }
                     else if(firstParameter.substring(nonZeroIndex).equals("2")) {
+                        droid.moveDroid(Integer.parseInt(inputInstruction.toString()));
+                        if(droid.getX() == 0 && droid.getY() == 0) {
+                            break;
+                        }
                         droid.setDir(Integer.parseInt(inputInstruction.toString()));
                         if(droid.getDir() == 4) inputInstruction = new StringBuilder("2");
                         else if(droid.getDir() == 3) inputInstruction = new StringBuilder("1");
                         else if(droid.getDir() == 2) inputInstruction = new StringBuilder("3");
                         else if(droid.getDir() == 1) inputInstruction = new StringBuilder("4");
-                        droid.moveDroid(Integer.parseInt(inputInstruction.toString()));
                         droid.setTankLocation();
-                        System.out.println("FOUND");
                     }
-                    //System.out.println(firstParameter.substring(nonZeroIndex));
                 } else {
                     relativeBase += Integer.parseInt(firstParameter.toString());
                 }

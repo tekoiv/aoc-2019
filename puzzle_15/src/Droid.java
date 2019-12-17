@@ -102,6 +102,8 @@ public class Droid {
             }
             System.out.println();
         }
+        System.out.println("Starting point with offset: " + robot[0] + ", " + robot[1]);
+        System.out.println("Tank with offset: " + (tankLocation[0] + offset[0]) + ", " + (tankLocation[1] + offset[1]));
     }
     // offset
     private int[] getOffset() {

@@ -2,11 +2,19 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Main {
+
+    static Droid droid = new Droid(0, 0, 4);
+    static final int ROW = 9;
+    static final int COL = 10;
+    //neighbours
+    static int rowNum[] = {-1, 0, 0, 1};
+    static int colNum[] = {0, -1, 1, 0};
     //refactored intCodeComputer from puzzle 5
     static void runProgram(ArrayList<StringBuilder> input, StringBuilder inputInstruction) {
-        Droid droid = new Droid(0, 0, 4);
         int index = 0;
         int relativeBase = 0;
         char modeOne, modeTwo, modeThree;
@@ -209,6 +217,46 @@ public class Main {
         }
     }
 
+    static boolean isValid(int row, int col) {
+        return (row >= 0) && (row < ROW) && (col >= 0) && (col < COL);
+    }
+
+    static int findShortestPath(int mat[][], Point src, Point dest) {
+        if(mat[src.x][src.y] != 1 || mat[dest.x][dest.y] != 1) return -1;
+        //which cells are visited
+        boolean[][] visited = new boolean[ROW][COL];
+        visited[src.x][src.y] = true;
+        Queue<QueueNode> q = new LinkedList<>();
+
+        QueueNode s = new QueueNode(src, 0);
+        q.add(s);
+
+        while(!q.isEmpty()) {
+            QueueNode current = q.peek();
+            Point pt = current.pt;
+
+            if(pt.x == dest.x && pt.y == dest.y) {
+                return current.dist;
+            }
+
+            q.remove();
+
+            for(int i = 0; i < 4; i++) {
+                int row = pt.x + rowNum[i];
+                int col = pt.y + colNum[i];
+
+                if(isValid(row, col) && mat[row][col] == 1 && !visited[row][col]) {
+                    visited[row][col] = true;
+                    QueueNode adjCell = new QueueNode(new Point(row, col), current.dist + 1);
+
+                    q.add(adjCell);
+                }
+            }
+        }
+
+        return -1;
+    }
+
     public static void main(String[] args) {
         String input = "";
         try {
@@ -226,6 +274,24 @@ public class Main {
             sbList.set(i, new StringBuilder(array[i]));
         }
         runProgram(sbList, new StringBuilder("2"));
+        int test[][] = {{ 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 },
+                { 1, 0, 1, 0, 1, 1, 1, 0, 1, 1 },
+                { 1, 1, 1, 0, 1, 1, 0, 1, 0, 1 },
+                { 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+                { 1, 1, 1, 0, 1, 1, 1, 0, 1, 0 },
+                { 1, 0, 1, 1, 1, 1, 0, 1, 0, 0 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 },
+                { 1, 1, 0, 0, 0, 0, 1, 0, 0, 1 }};
+        Point source = new Point(0, 0);
+        Point dest = new Point(3, 4);
+        int dist = findShortestPath(test, source, dest);
+
+        if(dist != Integer.MAX_VALUE) System.out.println("Shortest path: " + dist);
+        else System.out.println("Shortest path doesn't exist.");
+
+
+
     }
 }
 

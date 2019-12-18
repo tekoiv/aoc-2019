@@ -46,6 +46,9 @@ public class Main {
         for(int i = 0; i < input.size(); i++) {
             int counter = 0;
             List<Integer> pattern = getPattern(i, input.size());
+            if(!pattern.contains(-1) && !pattern.contains(1)){
+                break;
+            }
             for(int j = 0; j < input.size(); j++) {
                 counter += input.get(j)*pattern.get(j);
             }
@@ -63,20 +66,17 @@ public class Main {
 
     public static void main(String[] args) {
         String line = "";
-        String inputString = "03036732577212944063491565474664";
         try {
             BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_16.txt"));
             line = reader.readLine();
         } catch(IOException e) { System.out.println(e); }
-        List<Integer> input = Arrays.asList("03036732577212944063491565474664".split(""))
+        List<Integer> input = Arrays.asList(line.split(""))
                 .stream()
                 .mapToInt(Integer::parseInt)
                 .boxed()
                 .collect(Collectors.toList());
         List<Integer> repeatedList = new ArrayList<>();
-        for(int i = 0; i < 10000; i++) repeatedList.addAll(input);
+        //for(int i = 0; i < 100; i++) repeatedList.addAll(input);
         System.out.println(solvePartOne(input));
-        recursionIndex = 0;
-        //System.out.println(solvePartTwo(inputString, solvePartOne(repeatedList)));
     }
 }

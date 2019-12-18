@@ -8,8 +8,8 @@ import java.util.Queue;
 public class Main {
 
     static Droid droid = new Droid(0, 0, 4);
-    static final int ROW = 9;
-    static final int COL = 10;
+    static final int ROW = 41;
+    static final int COL = 41;
     //neighbours
     static int rowNum[] = {-1, 0, 0, 1};
     static int colNum[] = {0, -1, 1, 0};
@@ -221,8 +221,8 @@ public class Main {
         return (row >= 0) && (row < ROW) && (col >= 0) && (col < COL);
     }
 
-    static int findShortestPath(int mat[][], Point src, Point dest) {
-        if(mat[src.x][src.y] != 1 || mat[dest.x][dest.y] != 1) return -1;
+    static int findShortestPath(char mat[][], Point src, Point dest) {
+        if(mat[src.x][src.y] != '.' || mat[dest.x][dest.y] != '.') return -1;
         //which cells are visited
         boolean[][] visited = new boolean[ROW][COL];
         visited[src.x][src.y] = true;
@@ -245,7 +245,7 @@ public class Main {
                 int row = pt.x + rowNum[i];
                 int col = pt.y + colNum[i];
 
-                if(isValid(row, col) && mat[row][col] == 1 && !visited[row][col]) {
+                if(isValid(row, col) && mat[row][col] == '.' && !visited[row][col]) {
                     visited[row][col] = true;
                     QueueNode adjCell = new QueueNode(new Point(row, col), current.dist + 1);
 
@@ -274,24 +274,13 @@ public class Main {
             sbList.set(i, new StringBuilder(array[i]));
         }
         runProgram(sbList, new StringBuilder("2"));
-        int test[][] = {{ 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 },
-                { 1, 0, 1, 0, 1, 1, 1, 0, 1, 1 },
-                { 1, 1, 1, 0, 1, 1, 0, 1, 0, 1 },
-                { 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-                { 1, 1, 1, 0, 1, 1, 1, 0, 1, 0 },
-                { 1, 0, 1, 1, 1, 1, 0, 1, 0, 0 },
-                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-                { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 },
-                { 1, 1, 0, 0, 0, 0, 1, 0, 0, 1 }};
-        Point source = new Point(0, 0);
-        Point dest = new Point(3, 4);
-        int dist = findShortestPath(test, source, dest);
+        char maze[][] = droid.getMaze();
+        Point source = new Point(21, 21);
+        Point dest = new Point(9, 33);
+        int dist = findShortestPath(maze, source, dest);
 
         if(dist != Integer.MAX_VALUE) System.out.println("Shortest path: " + dist);
         else System.out.println("Shortest path doesn't exist.");
-
-
-
     }
 }
 

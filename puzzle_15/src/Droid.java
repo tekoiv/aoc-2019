@@ -10,6 +10,7 @@ public class Droid {
     ArrayList<int[]> walls = new ArrayList<>();
     int[] tankLocation;
     int[] robot;
+    char[][] visualMap;
     public Droid(int x, int y, int dir) {
         this.x = x;
         this.y = y;
@@ -82,7 +83,7 @@ public class Droid {
             if(w[0] > largestX) largestX = w[0];
             if(w[1] > largestY) largestY = w[1];
         }
-        char[][] visualMap = new char[largestX + 1][largestY + 1];
+        visualMap = new char[largestX + 1][largestY + 1];
         for(int i = 0; i < largestY + 1; i++){
             for(int j = 0; j < largestX + 1; j++) {
                 visualMap[j][i] = ' ';
@@ -94,8 +95,8 @@ public class Droid {
                 }
             }
         }
-        visualMap[robot[0]][robot[1]] = 'R';
-        visualMap[tankLocation[0] + offset[0]][tankLocation[1] + offset[1]] = 'T';
+        //visualMap[robot[0]][robot[1]] = 'R';
+        //visualMap[tankLocation[0] + offset[0]][tankLocation[1] + offset[1]] = 'T';
         for(int i = 0; i < largestY + 1; i++) {
             for(int j = 0; j < largestX + 1; j++) {
                 System.out.print(visualMap[j][i]);
@@ -104,6 +105,11 @@ public class Droid {
         }
         System.out.println("Starting point with offset: " + robot[0] + ", " + robot[1]);
         System.out.println("Tank with offset: " + (tankLocation[0] + offset[0]) + ", " + (tankLocation[1] + offset[1]));
+        System.out.println("Rows: " + visualMap.length + ", columns: " + visualMap[0].length);
+    }
+
+    public char[][] getMaze() {
+        return visualMap;
     }
     // offset
     private int[] getOffset() {

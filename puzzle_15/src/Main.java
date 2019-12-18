@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class Main {
@@ -10,6 +11,7 @@ public class Main {
     static Droid droid = new Droid(0, 0, 4);
     static final int ROW = 41;
     static final int COL = 41;
+    static List<Point> oxygenPoints = new ArrayList<>();
     //neighbours
     static int rowNum[] = {-1, 0, 0, 1};
     static int colNum[] = {0, -1, 1, 0};
@@ -257,6 +259,38 @@ public class Main {
         return -1;
     }
 
+    static boolean isOxygenLevelZero(char[][] map) {
+        for(int i = 0; i < map.length; i++) {
+            for(int j = 0; j < map[0].length; j++) {
+                if(map[j][i] == '.') {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static void oxygenTick(char[][] map, List<Point> currentOxygenPoints) {
+        for(Point p: currentOxygenPoints) {
+            if(map[p.getX() + 1][p.getY()] == '.') {
+                oxygenPoints.add(new Point(p.getX() + 1, p.getY()));
+                map[p.getX() + 1][p.getY()] = 'O';
+            }
+            if(map[p.getX() - 1][p.getY()] == '.') {
+                oxygenPoints.add(new Point(p.getX() - 1, p.getY()));
+                map[p.getX() - 1][p.getY()] = 'O';
+            }
+            if(map[p.getX()][p.getY() + 1] == '.') {
+                oxygenPoints.add(new Point(p.getX(), p.getY() + 1));
+                map[p.getX()][p.getY() + 1] = 'O';
+            }
+            if(map[p.getX()][p.getY() - 1] == '.') {
+                oxygenPoints.add(new Point(p.getX(), p.getY() - 1));
+                map[p.getX()][p.getY() - 1] = 'O';
+            }
+        }
+    }
+
     public static void main(String[] args) {
         String input = "";
         try {
@@ -281,6 +315,15 @@ public class Main {
 
         if(dist != Integer.MAX_VALUE) System.out.println("Shortest path: " + dist);
         else System.out.println("Shortest path doesn't exist.");
+        int index = 0;
+        maze[9][33] = 'O';
+        oxygenPoints.add(new Point(9, 33));
+        while(isOxygenLevelZero(maze)) {
+            List<Point> currentOxygenPoints = new ArrayList<>(oxygenPoints);
+            oxygenTick(maze, currentOxygenPoints);
+            index++;
+        }
+        System.out.println("Minutes until full of oxygen: " + index);
     }
 }
 

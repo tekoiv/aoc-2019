@@ -151,7 +151,7 @@ public class Main {
     public static void main(String[] args) {
         String input = "";
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_9.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_17.txt"));
             input = reader.readLine();
         } catch (IOException e) { System.out.println(e); }
         //input = "3,3,1105,-1,9,1101,0,0,12,4,12,99,1";

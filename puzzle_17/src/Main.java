@@ -2,8 +2,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
+
+    static List<Integer> ASCIIList;
+
     //refactored intCodeComputer from puzzle 5
     static void runProgram(ArrayList<StringBuilder> input, StringBuilder inputInstruction) {
         int index = 0;
@@ -58,7 +63,8 @@ public class Main {
                             }
                         }
                     }
-                    System.out.println(firstParameter.substring(nonZeroIndex));
+                    //System.out.println(firstParameter.substring(nonZeroIndex));
+                    ASCIIList.add(Integer.parseInt(firstParameter.substring(nonZeroIndex)));
                 } else {
                     relativeBase += Integer.parseInt(firstParameter.toString());
                 }
@@ -148,23 +154,72 @@ public class Main {
         }
     }
 
+    static List<Point> getCrossroads(List<Point> points) {
+        List<Point> crossRoads = new ArrayList<>();
+        for(int i = 0; i < points.size(); i++) {
+            int finalI = i;
+            List<Point> adjacent = points.stream()
+                    .filter(item -> {
+                        int currentX = points.get(finalI).getX();
+                        int currentY = points.get(finalI).getY();
+                        return ((item.getX() == currentX - 1 && item.getY() == currentY)
+                        || (item.getX() == currentX + 1 && item.getY() == currentY)
+                        || (item.getX() == currentX && item.getY() == currentY - 1)
+                        || (item.getX() == currentX && item.getY() == currentY + 1));
+                    }).collect(Collectors.toList());
+            if(adjacent.size() > 3) crossRoads.add(points.get(i));
+        }
+        return crossRoads;
+    }
+
+    static void solveOne() {
+        List<Point> scaffoldingPoints = new ArrayList<>();
+        int row = 0;
+        int col = 0;
+        for (Integer code : ASCIIList) {
+            if (code == 35) {
+                System.out.print('#');
+                scaffoldingPoints.add(new Point(row, col));
+                row++;
+            }
+            else if (code == 46) {
+                System.out.print(".");
+                row++;
+            }
+            else if (code == 10) {
+                System.out.println();
+                col++;
+                row = 0;
+            }
+            else System.out.print("^");
+        }
+        List<Point> crossRoads = getCrossroads(scaffoldingPoints);
+        int counter = 0;
+        for(Point p: crossRoads) {
+            counter += p.getX()*p.getY();
+        }
+        System.out.println("Answer for 17 a): " + counter);
+
+    }
+
     public static void main(String[] args) {
         String input = "";
+        ASCIIList = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_17.txt"));
             input = reader.readLine();
         } catch (IOException e) { System.out.println(e); }
-        //input = "3,3,1105,-1,9,1101,0,0,12,4,12,99,1";
         String[] array = input.split(",");
         StringBuilder[] sbArray = new StringBuilder[array.length];
         StringBuilder zero = new StringBuilder("0");
         ArrayList<StringBuilder> sbList = new ArrayList<>();
-        for(int i = 0; i < 2000; i++) {
+        for(int i = 0; i < 4000; i++) {
             sbList.add(zero);
         }
         for(int i = 0; i < sbArray.length; i++) {
             sbList.set(i, new StringBuilder(array[i]));
         }
         runProgram(sbList, new StringBuilder("0"));
+        solveOne();
     }
 }

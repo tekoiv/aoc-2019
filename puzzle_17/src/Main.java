@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 public class Main {
 
     static List<Integer> ASCIIList;
+    static char[][] maze = new char[50][50];
 
     //refactored intCodeComputer from puzzle 5
     static void runProgram(ArrayList<StringBuilder> input, StringBuilder inputInstruction) {
@@ -199,8 +200,17 @@ public class Main {
             counter += p.getX()*p.getY();
         }
         System.out.println("Answer for 17 a): " + counter);
-
+        for(Point p: scaffoldingPoints) maze[p.getX()][p.getY()] = '#';
+        for(int i = 0; i < 50; i++){
+            for(int j = 0; j < 50; j++) {
+                if(maze[j][i] != '#') maze[j][i] = '.';
+            }
+        }
+        //robot in 24, 22
+        maze[24][22] = '^';
     }
+
+    //solve maze()
 
     public static void main(String[] args) {
         String input = "";
@@ -221,5 +231,7 @@ public class Main {
         }
         runProgram(sbList, new StringBuilder("0"));
         solveOne();
+        sbList.set(0, new StringBuilder("2"));
+        //runProgram(sbList, new StringBuilder("0"));
     }
 }

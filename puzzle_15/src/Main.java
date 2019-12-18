@@ -8,6 +8,12 @@ import java.util.Queue;
 
 public class Main {
 
+    /*
+    The programs are getting very long since I haven't taken the
+    time to refactor this intCode vm properly. Searching for the
+    shortest path in a maze is cool though.g
+     */
+
     static Droid droid = new Droid(0, 0, 4);
     static final int ROW = 41;
     static final int COL = 41;

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class Main {
 
     static List<Integer> ASCIIList;
-    static char[][] maze = new char[50][50];
+    static char[][] maze = new char[49][41];
 
     //refactored intCodeComputer from puzzle 5
     static void runProgram(ArrayList<StringBuilder> input, StringBuilder inputInstruction) {
@@ -194,6 +194,7 @@ public class Main {
             }
             else System.out.print("^");
         }
+        System.out.println(row + ", " + col);
         List<Point> crossRoads = getCrossroads(scaffoldingPoints);
         int counter = 0;
         for(Point p: crossRoads) {
@@ -201,17 +202,30 @@ public class Main {
         }
         System.out.println("Answer for 17 a): " + counter);
         for(Point p: scaffoldingPoints) maze[p.getX()][p.getY()] = '#';
-        for(int i = 0; i < 50; i++){
-            for(int j = 0; j < 50; j++) {
+        for(int i = 0; i < 41; i++){
+            for(int j = 0; j < 49; j++) {
                 if(maze[j][i] != '#') maze[j][i] = '.';
             }
         }
-        //robot in 24, 22
         maze[24][22] = '^';
+        //robot in 24, 22
     }
 
-    static List<Integer> solveMaze() {
-        return List.of(1, 2);
+    static List<String> solveMaze() {
+        Robot robot = new Robot(24, 22, 'L');
+        List<String> strList = new ArrayList<>();
+        while(robot.getX() != 34 && robot.getY() != 38) {
+            int counter = 0;
+            String instruction = "";
+            while (robot.getNextPosition(maze) != '.') {
+                robot.move();
+                counter++;
+            }
+            char turnDir = robot.turn(maze);
+            instruction += (Integer.toString(counter) + turnDir);
+            strList.add(instruction);
+        }
+        return strList;
     }
 
     public static void main(String[] args) {
@@ -228,12 +242,15 @@ public class Main {
         for(int i = 0; i < 4000; i++) {
             sbList.add(zero);
         }
+        //34
         for(int i = 0; i < sbArray.length; i++) {
             sbList.set(i, new StringBuilder(array[i]));
         }
         runProgram(sbList, new StringBuilder("0"));
         solveOne();
         sbList.set(0, new StringBuilder("2"));
+        //34, 38
         //runProgram(sbList, new StringBuilder("0"));
+        solveMaze();
     }
 }

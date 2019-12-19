@@ -192,7 +192,10 @@ public class Main {
                 col++;
                 row = 0;
             }
-            else System.out.print("^");
+            else {
+                System.out.print("^");
+                row++;
+            }
         }
         System.out.println(row + ", " + col);
         List<Point> crossRoads = getCrossroads(scaffoldingPoints);
@@ -208,23 +211,29 @@ public class Main {
             }
         }
         maze[24][22] = '^';
+        for(int i = 0; i < 41; i++) {
+            for(int j = 0; j < 49; j++) {
+                System.out.print(maze[j][i]);
+            } System.out.println();
+        }
         //robot in 24, 22
     }
 
     static List<String> solveMaze() {
         Robot robot = new Robot(24, 22, 'L');
         List<String> strList = new ArrayList<>();
+        strList.add("L");
         while(robot.getX() != 34 && robot.getY() != 38) {
             int counter = 0;
-            String instruction = "";
             while (robot.getNextPosition(maze) != '.') {
                 robot.move();
                 counter++;
             }
             char turnDir = robot.turn(maze);
-            instruction += (Integer.toString(counter) + turnDir);
-            strList.add(instruction);
+            strList.add(Integer.toString(counter));
+            strList.add(Character.toString(turnDir));
         }
+        strList.add("8");
         return strList;
     }
 
@@ -251,6 +260,7 @@ public class Main {
         sbList.set(0, new StringBuilder("2"));
         //34, 38
         //runProgram(sbList, new StringBuilder("0"));
-        solveMaze();
+        System.out.println("Width " + maze[0].length + " Height: " + maze.length);
+        System.out.println(solveMaze());
     }
 }

@@ -210,7 +210,9 @@ public class Main {
         maze[24][22] = '^';
     }
 
-    //solve maze()
+    static List<Integer> solveMaze() {
+        return List.of(1, 2);
+    }
 
     public static void main(String[] args) {
         String input = "";

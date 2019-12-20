@@ -9,11 +9,20 @@ public class Main {
 
     static List<Integer> ASCIIList;
     static char[][] maze = new char[49][41];
+    static List<String> mainRoutine = convertToASCII(List.of("A", "A", "B", "C", "B", "C", "B", "C", "C", "A"));
+    static List<String> A = convertToASCII(List.of("L", "10", "R", "8", "R", "8"));
+    static List<String> B = convertToASCII(List.of("L","10","L","12","R","8","R","10"));
+    static List<String> C = convertToASCII(List.of("R","10","L","12","R","10"));
 
     //refactored intCodeComputer from puzzle 5
     static void runProgram(ArrayList<StringBuilder> input, StringBuilder inputInstruction) {
         int index = 0;
         int relativeBase = 0;
+        int inputInstructionIndex = 0;
+        int mainRoutineIndex = 0;
+        int AIndex = 0;
+        int BIndex = 0;
+        int CIndex = 0;
         char modeOne, modeTwo, modeThree;
         StringBuilder firstParameter;
         StringBuilder secondParameter;
@@ -38,7 +47,37 @@ public class Main {
                 else {
                     i = relativeBase + Integer.parseInt(input.get(index + 1).toString());
                 }
-                input.set(i, inputInstruction);
+                if(inputInstructionIndex == 0) {
+                    input.set(i, new StringBuilder(mainRoutine.get(mainRoutineIndex)));
+                    if(mainRoutine.get(mainRoutineIndex).equals("10")) inputInstructionIndex++;
+                    System.out.println("First");
+                    mainRoutineIndex++;
+                } else if(inputInstructionIndex == 1) {
+                    input.set(i, new StringBuilder(A.get(AIndex)));
+                    if(A.get(AIndex).equals("10")) {
+                        inputInstructionIndex++;
+                    }
+                    System.out.println("Second");
+                    AIndex++;
+                } else if(inputInstructionIndex == 2) {
+                    input.set(i, new StringBuilder(B.get(BIndex)));
+                    if(B.get(BIndex).equals("10")) {
+                        inputInstructionIndex++;
+                    }
+                    System.out.println("Third");
+                    BIndex++;
+                } else if(inputInstructionIndex == 3) {
+                    input.set(i, new StringBuilder(C.get(CIndex)));
+                    if(C.get(CIndex).equals("10")) {
+                        inputInstructionIndex++;
+                    }
+                    System.out.println("Fourth");
+                    CIndex++;
+                } else if(inputInstructionIndex == 4){
+                    input.set(i, new StringBuilder("110"));
+                    System.out.println("Fifth");
+                    inputInstructionIndex++;
+                }
                 index += 2;
             }
             else if(opCode.substring(opCode.length() - 2).matches("04|09")) {
@@ -64,7 +103,7 @@ public class Main {
                             }
                         }
                     }
-                    //System.out.println(firstParameter.substring(nonZeroIndex));
+                    System.out.println(firstParameter.substring(nonZeroIndex));
                     ASCIIList.add(Integer.parseInt(firstParameter.substring(nonZeroIndex)));
                 } else {
                     relativeBase += Integer.parseInt(firstParameter.toString());
@@ -237,6 +276,99 @@ public class Main {
         return strList;
     }
 
+    static List<String> convertToASCII(List<String> input) {
+        List<String> ASCIIList = new ArrayList<>();
+        for(String s: input) {
+            switch (s) {
+                case "A": ASCIIList.add("65"); break;
+                case "B": ASCIIList.add("66"); break;
+                case "C": ASCIIList.add("67"); break;
+                case ",": ASCIIList.add("44"); break;
+                case "R": ASCIIList.add("82"); break;
+                case "L": ASCIIList.add("76"); break;
+                case "10": ASCIIList.add("57"); ASCIIList.add("49"); break;
+                case "8": ASCIIList.add("56"); break;
+                case "12": ASCIIList.add("57"); ASCIIList.add("51"); break;
+                case "NEW": ASCIIList.add("10"); break;
+            }
+            ASCIIList.add("44");
+        }
+        ASCIIList.set(ASCIIList.size() - 1, "10");
+        return ASCIIList;
+    }
+
+    static void convertFromASCII() {
+        String[] message = ("10\n" +
+                "77\n" +
+                "97\n" +
+                "105\n" +
+                "110\n" +
+                "58\n" +
+                "10\n" +
+                "70\n" +
+                "117\n" +
+                "110\n" +
+                "99\n" +
+                "116\n" +
+                "105\n" +
+                "111\n" +
+                "110\n" +
+                "32\n" +
+                "65\n" +
+                "58\n" +
+                "10\n" +
+                "70\n" +
+                "117\n" +
+                "110\n" +
+                "99\n" +
+                "116\n" +
+                "105\n" +
+                "111\n" +
+                "110\n" +
+                "32\n" +
+                "66\n" +
+                "58\n" +
+                "10\n" +
+                "70\n" +
+                "117\n" +
+                "110\n" +
+                "99\n" +
+                "116\n" +
+                "105\n" +
+                "111\n" +
+                "110\n" +
+                "32\n" +
+                "67\n" +
+                "58\n" +
+                "10\n" +
+                "67\n" +
+                "111\n" +
+                "110\n" +
+                "116\n" +
+                "105\n" +
+                "110\n" +
+                "117\n" +
+                "111\n" +
+                "117\n" +
+                "115\n" +
+                "32\n" +
+                "118\n" +
+                "105\n" +
+                "100\n" +
+                "101\n" +
+                "111\n" +
+                "32\n" +
+                "102\n" +
+                "101\n" +
+                "101\n" +
+                "100\n" +
+                "63\n" +
+                "10\n").split("\n");
+        StringBuilder sb = new StringBuilder();
+        for(String s: message) sb.append(Character.toString((char) Integer.parseInt(s)));
+        System.out.println(sb);
+    }
+
     public static void main(String[] args) {
         String input = "";
         ASCIIList = new ArrayList<>();
@@ -255,12 +387,14 @@ public class Main {
         for(int i = 0; i < sbArray.length; i++) {
             sbList.set(i, new StringBuilder(array[i]));
         }
-        runProgram(sbList, new StringBuilder("0"));
-        solveOne();
+        //runProgram(sbList, new StringBuilder("0"));
+        //solveOne();
         sbList.set(0, new StringBuilder("2"));
         //34, 38
-        //runProgram(sbList, new StringBuilder("0"));
-        System.out.println("Width " + maze[0].length + " Height: " + maze.length);
-        System.out.println(solveMaze());
+        runProgram(sbList, new StringBuilder("0"));
+        //List<String> path = solveMaze();
+        //System.out.println(path);
+        //System.out.println(mainRoutine);
+        //convertFromASCII();
     }
 }

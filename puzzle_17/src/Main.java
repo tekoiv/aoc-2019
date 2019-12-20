@@ -10,7 +10,7 @@ public class Main {
     static List<Integer> ASCIIList;
     static char[][] maze = new char[49][41];
     static List<String> mainRoutine = convertToASCII(List.of("A", "A", "B", "C", "B", "C", "B", "C", "C", "A"));
-    static List<String> A = convertToASCII(List.of("L", "10", "R", "8", "R", "8"));
+    static List<String> A = convertToASCII(List.of("L","10","R","8","R","8"));
     static List<String> B = convertToASCII(List.of("L","10","L","12","R","8","R","10"));
     static List<String> C = convertToASCII(List.of("R","10","L","12","R","10"));
 
@@ -77,7 +77,7 @@ public class Main {
                     input.set(i, new StringBuilder("110"));
                     System.out.println("Fifth");
                     inputInstructionIndex++;
-                }
+                } else inputInstructionIndex = 1;
                 index += 2;
             }
             else if(opCode.substring(opCode.length() - 2).matches("04|09")) {
@@ -103,7 +103,7 @@ public class Main {
                             }
                         }
                     }
-                    System.out.println(firstParameter.substring(nonZeroIndex));
+                    //System.out.println(firstParameter.substring(nonZeroIndex));
                     ASCIIList.add(Integer.parseInt(firstParameter.substring(nonZeroIndex)));
                 } else {
                     relativeBase += Integer.parseInt(firstParameter.toString());
@@ -286,9 +286,9 @@ public class Main {
                 case ",": ASCIIList.add("44"); break;
                 case "R": ASCIIList.add("82"); break;
                 case "L": ASCIIList.add("76"); break;
-                case "10": ASCIIList.add("57"); ASCIIList.add("49"); break;
+                case "10": ASCIIList.add("57"); ASCIIList.add("44"); ASCIIList.add("49"); break;
                 case "8": ASCIIList.add("56"); break;
-                case "12": ASCIIList.add("57"); ASCIIList.add("51"); break;
+                case "12": ASCIIList.add("57"); ASCIIList.add("44"); ASCIIList.add("51"); break;
                 case "NEW": ASCIIList.add("10"); break;
             }
             ASCIIList.add("44");
@@ -298,75 +298,9 @@ public class Main {
     }
 
     static void convertFromASCII() {
-        String[] message = ("10\n" +
-                "77\n" +
-                "97\n" +
-                "105\n" +
-                "110\n" +
-                "58\n" +
-                "10\n" +
-                "70\n" +
-                "117\n" +
-                "110\n" +
-                "99\n" +
-                "116\n" +
-                "105\n" +
-                "111\n" +
-                "110\n" +
-                "32\n" +
-                "65\n" +
-                "58\n" +
-                "10\n" +
-                "70\n" +
-                "117\n" +
-                "110\n" +
-                "99\n" +
-                "116\n" +
-                "105\n" +
-                "111\n" +
-                "110\n" +
-                "32\n" +
-                "66\n" +
-                "58\n" +
-                "10\n" +
-                "70\n" +
-                "117\n" +
-                "110\n" +
-                "99\n" +
-                "116\n" +
-                "105\n" +
-                "111\n" +
-                "110\n" +
-                "32\n" +
-                "67\n" +
-                "58\n" +
-                "10\n" +
-                "67\n" +
-                "111\n" +
-                "110\n" +
-                "116\n" +
-                "105\n" +
-                "110\n" +
-                "117\n" +
-                "111\n" +
-                "117\n" +
-                "115\n" +
-                "32\n" +
-                "118\n" +
-                "105\n" +
-                "100\n" +
-                "101\n" +
-                "111\n" +
-                "32\n" +
-                "102\n" +
-                "101\n" +
-                "101\n" +
-                "100\n" +
-                "63\n" +
-                "10\n").split("\n");
-        StringBuilder sb = new StringBuilder();
-        for(String s: message) sb.append(Character.toString((char) Integer.parseInt(s)));
-        System.out.println(sb);
+        for(Integer i: ASCIIList) {
+            System.out.print((char) Integer.parseInt(Integer.toString(i)));
+        }
     }
 
     public static void main(String[] args) {
@@ -395,6 +329,6 @@ public class Main {
         //List<String> path = solveMaze();
         //System.out.println(path);
         //System.out.println(mainRoutine);
-        //convertFromASCII();
+        convertFromASCII();
     }
 }

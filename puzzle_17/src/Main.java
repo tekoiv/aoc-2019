@@ -1,3 +1,4 @@
+import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -286,9 +287,11 @@ public class Main {
                 case ",": ASCIIList.add("44"); break;
                 case "R": ASCIIList.add("82"); break;
                 case "L": ASCIIList.add("76"); break;
-                case "10": ASCIIList.add("57"); ASCIIList.add("44"); ASCIIList.add("49"); break;
+                case "10": ASCIIList.add("49"); ASCIIList.add("48"); break;
                 case "8": ASCIIList.add("56"); break;
-                case "12": ASCIIList.add("57"); ASCIIList.add("44"); ASCIIList.add("51"); break;
+                case "12": ASCIIList.add("49"); ASCIIList.add("50"); break;
+                case "1": ASCIIList.add("49"); break;
+                case "9": ASCIIList.add("57"); break;
                 case "NEW": ASCIIList.add("10"); break;
             }
             ASCIIList.add("44");
@@ -321,6 +324,10 @@ public class Main {
         for(int i = 0; i < sbArray.length; i++) {
             sbList.set(i, new StringBuilder(array[i]));
         }
+        /*
+        !! Part one and two need to be run separately
+        since the code is kinda hacky.
+         */
         //runProgram(sbList, new StringBuilder("0"));
         //solveOne();
         sbList.set(0, new StringBuilder("2"));
@@ -330,5 +337,6 @@ public class Main {
         //System.out.println(path);
         //System.out.println(mainRoutine);
         convertFromASCII();
+        System.out.println(ASCIIList.get(ASCIIList.size() - 1));
     }
 }

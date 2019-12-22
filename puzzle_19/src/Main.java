@@ -179,23 +179,30 @@ public class Main {
         }
     }
 
-    static void createSmartCoordinates(ArrayList<StringBuilder> input) {
+    static void createSmartCoordinates(ArrayList<StringBuilder> input, int areaX, int areaY) {
         int x = 0;
         int y = 0;
         boolean foundFirst = false;
-        while(x < 50 && y < 50) {
+        while(x < areaX && y < areaY) {
             Point point = new Point(x, y);
             if(runProgram((ArrayList<StringBuilder>) input.clone(), point)) {
                 foundFirst = true;
                 affectedPoints.add(point);
+                System.out.println(x + "," + y);
                 x++;
             } else {
                 if(foundFirst) {
                     foundFirst = false;
                     y++;
-                    if(x > 3) x -= 2;
-                    else x -= 1;
-                } else x++;
+                    if(x > 20) x -= 20;
+                    else x = 0;
+                } else {
+                    if(x > y*2 + 5) {
+                        x = 0;
+                        y++;
+                    }
+                    else x++;
+                }
             }
         }
     }
@@ -220,15 +227,18 @@ public class Main {
         System.out.println(sbList);
         //createSmartCoordinates(sbList);
         //affectedPoints.forEach(point -> System.out.println(point.x + "," + point.y));
-        int counter = 0;
-        for(int i = 0; i < 50; i++) {
-            for(int j = 0; j < 50; j++) {
+        /*int counter = 0;
+        for(int i = 0; i < 100; i++) {
+            for(int j = 0; j < 100; j++) {
                 if(runProgram((ArrayList<StringBuilder>) sbList.clone(), new Point(j, i))) {
                     counter++;
                     System.out.println(j + "," + i);
                 }
             }
         }
-        System.out.println(counter);
+        System.out.println(counter);*/
+        //System.out.println(runProgram((ArrayList<StringBuilder>) sbList.clone(), new Point(2, 3)));
+        createSmartCoordinates(sbList, 100, 100);
+        System.out.println(affectedPoints.size());
     }
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -17,6 +18,7 @@ public class Main {
     //neighbours
     static int rowNum[] = {-1, 0, 0, 1};
     static int colNum[] = {0, -1, 1, 0};
+    static int totalPath = 0;
 
     static void getKeysAndDoors(List<StringBuilder> input) {
         int lengthX = input.get(0).length();
@@ -84,6 +86,27 @@ public class Main {
         reachableKeys.forEach(key -> System.out.println(key.getX() + "," + key.getY() + "," + key.getValue()));
     }
 
+    static void findPath(char[][] maze) {
+        while(keys.size() > 0) {
+            Key keyWithShortestPath = new Key(0, 0, 'ä');
+            int shortestPath = Integer.MAX_VALUE;
+            for(Key k: keys) {
+                int pathLength = findShortestPath(maze, startingPoint, k);
+                if(pathLength != -1 && pathLength < shortestPath) {
+                    keyWithShortestPath = k;
+                    shortestPath = pathLength;
+                }
+            }
+            totalPath += shortestPath;
+            startingPoint = new Point(keyWithShortestPath.getX(), keyWithShortestPath.getY());
+            keys.remove(keyWithShortestPath);
+            final Key finalKey = keyWithShortestPath;
+            List<Door> doorToBeOpened = doors.stream().filter(door -> door.getValue() == Character.toUpperCase(finalKey.getValue())).collect(Collectors.toList());
+            maze[doorToBeOpened.get(0).getX()][doorToBeOpened.get(0).getY()] = '.';
+            debugPrint();
+        }
+    }
+
     public static void main(String[] args) {
         List<StringBuilder> input = new ArrayList<>();
         String line;
@@ -104,11 +127,9 @@ public class Main {
                 maze[j][i] = input.get(i).charAt(j);
             }
         }
-        for(Key k: keys) {
-            if(findShortestPath(maze, startingPoint, k) != -1) {
-                reachableKeys.add(k);
-            }
-        }
-        debugPrint();
+        //starting point
+        maze[40][40] = '.';
+        findPath(maze);
+        System.out.println("Total path: " + totalPath);
     }
 }

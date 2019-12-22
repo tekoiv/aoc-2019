@@ -218,13 +218,17 @@ public class Main {
             sbList.set(i, new StringBuilder(array[i]));
         }
         System.out.println(sbList);
-        /*createCoordinates();
-        while(pointIndex < allPoints.size()) {
-            runProgram((ArrayList<StringBuilder>) sbList.clone(), new StringBuilder("0"));
+        //createSmartCoordinates(sbList);
+        //affectedPoints.forEach(point -> System.out.println(point.x + "," + point.y));
+        int counter = 0;
+        for(int i = 0; i < 50; i++) {
+            for(int j = 0; j < 50; j++) {
+                if(runProgram((ArrayList<StringBuilder>) sbList.clone(), new Point(j, i))) {
+                    counter++;
+                    System.out.println(j + "," + i);
+                }
+            }
         }
-        System.out.println("Affected points: " + affectedPoints.size());
-        affectedPoints.forEach(point -> System.out.println(point.x + ", " + point.y));*/
-        createSmartCoordinates(sbList);
-        affectedPoints.forEach(point -> System.out.println(point.x + "," + point.y));
+        System.out.println(counter);
     }
 }

@@ -2,22 +2,17 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
-    //refactored intCodeComputer from puzzle 5
-
     /*
-    The code is very slow. Could be faster if we were to
-    eliminate the points that are definitely not inside the beam.
-    There's a clear pattern if we map out the points.
+    A bit messy but hey, it's another intcode puzzle.
      */
-
-    static final int MAX_X = 100;
-    static final int MAX_Y = 100;
-    static List<Point> allPoints = new ArrayList<>();
     static List<Point> affectedPoints = new ArrayList<>();
-    static List<Point> smartPoints = new ArrayList<>();
 
     static boolean runProgram(ArrayList<StringBuilder> input, Point point) {
         int index = 0;
@@ -48,10 +43,10 @@ public class Main {
                     i = relativeBase + Integer.parseInt(input.get(index + 1).toString());
                 }
                 if(instructionIndex == 0) {
-                    input.set(i, new StringBuilder(Integer.toString(point.x)));
+                    input.set(i, new StringBuilder(Long.toString(point.x)));
                     instructionIndex++;
                 } else {
-                    input.set(i, new StringBuilder(Integer.toString(point.y)));
+                    input.set(i, new StringBuilder(Long.toString(point.y)));
                     instructionIndex = 0;
                 }
                 index += 2;
@@ -171,14 +166,6 @@ public class Main {
         return false;
     }
 
-    static void createCoordinates() {
-        for(int i = 0; i < MAX_Y; i++) {
-            for(int j = 0; j < MAX_X; j++) {
-                allPoints.add(new Point(j, i));
-            }
-        }
-    }
-
     static void createSmartCoordinates(ArrayList<StringBuilder> input, int areaX, int areaY) {
         int x = 0;
         int y = 0;
@@ -188,13 +175,12 @@ public class Main {
             if(runProgram((ArrayList<StringBuilder>) input.clone(), point)) {
                 foundFirst = true;
                 affectedPoints.add(point);
-                System.out.println(x + "," + y);
                 x++;
             } else {
                 if(foundFirst) {
                     foundFirst = false;
                     y++;
-                    if(x > 20) x -= 20;
+                    if(x > 40) x -= 40;
                     else x = 0;
                 } else {
                     if(x > y*2 + 5) {
@@ -207,13 +193,47 @@ public class Main {
         }
     }
 
+    static boolean checkBeam(long x, long y, ArrayList<StringBuilder> input) {
+        return runProgram((ArrayList<StringBuilder>) input.clone(), new Point(x, y));
+    }
+
+    static double getProportion(ArrayList<StringBuilder> input) {
+        for(long x = 0;;x++) {
+            if(checkBeam(x, 100, input)) return x/100D;
+        }
+    }
+
+    static long[] find(long yBegin, long yOffset, ArrayList<StringBuilder> input) {
+        long x,y;
+        boolean trackBeam = false;
+        double proportion = getProportion(input);
+        for(y = yBegin;;y+=yOffset) {
+            for(x = (int)(y*proportion);;++x) {
+                boolean beam = checkBeam(x, y, (ArrayList<StringBuilder>) input.clone());
+                if(!trackBeam) {
+                    trackBeam = beam;
+                } else if(!beam || !checkBeam(x+99, y, (ArrayList<StringBuilder>) input.clone())) {
+                    break;
+                }
+                if(checkBeam(x, y+99, (ArrayList<StringBuilder>) input.clone())) {
+                    return new long[]{x, y};
+                }
+            }
+        }
+    }
+
+    static void solve2(ArrayList<StringBuilder> input) {
+        long[] longs = find(100, 30, (ArrayList<StringBuilder>) input.clone());
+        longs = find(longs[1]-30,1, (ArrayList<StringBuilder>) input.clone());
+        System.out.println(longs[0]*10000 + longs[1]);
+    }
+
     public static void main(String[] args) {
         String input = "";
         try {
             BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_19.txt"));
             input = reader.readLine();
         } catch (IOException e) { System.out.println(e); }
-        //input = "3,3,1105,-1,9,1101,0,0,12,4,12,99,1";
         String[] array = input.split(",");
         StringBuilder[] sbArray = new StringBuilder[array.length];
         StringBuilder zero = new StringBuilder("0");
@@ -224,21 +244,8 @@ public class Main {
         for(int i = 0; i < sbArray.length; i++) {
             sbList.set(i, new StringBuilder(array[i]));
         }
-        System.out.println(sbList);
-        //createSmartCoordinates(sbList);
-        //affectedPoints.forEach(point -> System.out.println(point.x + "," + point.y));
-        /*int counter = 0;
-        for(int i = 0; i < 100; i++) {
-            for(int j = 0; j < 100; j++) {
-                if(runProgram((ArrayList<StringBuilder>) sbList.clone(), new Point(j, i))) {
-                    counter++;
-                    System.out.println(j + "," + i);
-                }
-            }
-        }
-        System.out.println(counter);*/
-        //System.out.println(runProgram((ArrayList<StringBuilder>) sbList.clone(), new Point(2, 3)));
         createSmartCoordinates(sbList, 100, 100);
-        System.out.println(affectedPoints.size());
+        System.out.println("Part a: " + affectedPoints.size());
+        System.out.println("Part b: "); solve2(sbList);
     }
 }

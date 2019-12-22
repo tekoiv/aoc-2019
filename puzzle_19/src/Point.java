@@ -1,6 +1,6 @@
 public class Point {
-    int x, y;
-    public Point(int x, int y) {
+    long x, y;
+    public Point(long x, long y) {
         this.x = x;
         this.y = y;
     }

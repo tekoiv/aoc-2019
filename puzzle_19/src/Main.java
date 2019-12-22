@@ -2,11 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Main {
     /*
@@ -194,10 +190,14 @@ public class Main {
     }
 
     static boolean checkBeam(long x, long y, ArrayList<StringBuilder> input) {
+        //returns true if affected, false otherwise
         return runProgram((ArrayList<StringBuilder>) input.clone(), new Point(x, y));
     }
 
     static double getProportion(ArrayList<StringBuilder> input) {
+        //trying out these ugly for/while-loops just so I get used to it
+        //checking the proportion of x and y for points that return
+        //true (affected by beam) when run
         for(long x = 0;;x++) {
             if(checkBeam(x, 100, input)) return x/100D;
         }
@@ -207,7 +207,13 @@ public class Main {
         long x,y;
         boolean trackBeam = false;
         double proportion = getProportion(input);
+        //using offset to reduce run time. when visualising the beam, it's clear that we only need to
+        //check certain coordinates for every row
         for(y = yBegin;;y+=yOffset) {
+            /*
+            the ship automatically fits into a point if it's length is larger than 100 and the one 100 rows below it
+            returns true from checkbeam
+             */
             for(x = (int)(y*proportion);;++x) {
                 boolean beam = checkBeam(x, y, (ArrayList<StringBuilder>) input.clone());
                 if(!trackBeam) {

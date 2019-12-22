@@ -1,7 +1,7 @@
-public class Key {
+public class Door {
     int x, y;
     char value;
-    public Key(int x, int y, char value) {
+    public Door(int x, int y, char value) {
         this.x = x;
         this.y = y;
         this.value = value;
@@ -9,10 +9,6 @@ public class Key {
 
     public int getX() {
         return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
     }
 
     public int getY() {
@@ -23,11 +19,15 @@ public class Key {
         this.y = y;
     }
 
-    public void setValue(char value) {
-        this.value = value;
+    public void setX(int x) {
+        this.x = x;
     }
 
     public char getValue() {
         return value;
+    }
+
+    public void setValue(char value) {
+        this.value = value;
     }
 }

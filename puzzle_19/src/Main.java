@@ -2,13 +2,28 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     //refactored intCodeComputer from puzzle 5
-    static void runProgram(ArrayList<StringBuilder> input, StringBuilder inputInstruction) {
+
+    /*
+    The code is very slow. Could be faster if we were to
+    eliminate the points that are definitely not inside the beam.
+    There's a clear pattern if we map out the points.
+     */
+
+    static final int MAX_X = 100;
+    static final int MAX_Y = 100;
+    static List<Point> allPoints = new ArrayList<>();
+    static List<Point> affectedPoints = new ArrayList<>();
+    static List<Point> smartPoints = new ArrayList<>();
+
+    static boolean runProgram(ArrayList<StringBuilder> input, Point point) {
         int index = 0;
         int relativeBase = 0;
         char modeOne, modeTwo, modeThree;
+        int instructionIndex = 0;
         StringBuilder firstParameter;
         StringBuilder secondParameter;
         while (!input.get(index).toString().equals("99")) {
@@ -32,7 +47,13 @@ public class Main {
                 else {
                     i = relativeBase + Integer.parseInt(input.get(index + 1).toString());
                 }
-                input.set(i, inputInstruction);
+                if(instructionIndex == 0) {
+                    input.set(i, new StringBuilder(Integer.toString(point.x)));
+                    instructionIndex++;
+                } else {
+                    input.set(i, new StringBuilder(Integer.toString(point.y)));
+                    instructionIndex = 0;
+                }
                 index += 2;
             }
             else if(opCode.substring(opCode.length() - 2).matches("04|09")) {
@@ -58,7 +79,8 @@ public class Main {
                             }
                         }
                     }
-                    System.out.println(firstParameter.substring(nonZeroIndex));
+                    //System.out.println(firstParameter.substring(nonZeroIndex));
+                    if(firstParameter.substring(nonZeroIndex).equals("1")) return true;
                 } else {
                     relativeBase += Integer.parseInt(firstParameter.toString());
                 }
@@ -146,6 +168,36 @@ public class Main {
                 index += 4;
             }
         }
+        return false;
+    }
+
+    static void createCoordinates() {
+        for(int i = 0; i < MAX_Y; i++) {
+            for(int j = 0; j < MAX_X; j++) {
+                allPoints.add(new Point(j, i));
+            }
+        }
+    }
+
+    static void createSmartCoordinates(ArrayList<StringBuilder> input) {
+        int x = 0;
+        int y = 0;
+        boolean foundFirst = false;
+        while(x < 50 && y < 50) {
+            Point point = new Point(x, y);
+            if(runProgram((ArrayList<StringBuilder>) input.clone(), point)) {
+                foundFirst = true;
+                affectedPoints.add(point);
+                x++;
+            } else {
+                if(foundFirst) {
+                    foundFirst = false;
+                    y++;
+                    if(x > 3) x -= 2;
+                    else x -= 1;
+                } else x++;
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -166,7 +218,13 @@ public class Main {
             sbList.set(i, new StringBuilder(array[i]));
         }
         System.out.println(sbList);
-
-        runProgram(sbList, new StringBuilder("0"));
+        /*createCoordinates();
+        while(pointIndex < allPoints.size()) {
+            runProgram((ArrayList<StringBuilder>) sbList.clone(), new StringBuilder("0"));
+        }
+        System.out.println("Affected points: " + affectedPoints.size());
+        affectedPoints.forEach(point -> System.out.println(point.x + ", " + point.y));*/
+        createSmartCoordinates(sbList);
+        affectedPoints.forEach(point -> System.out.println(point.x + "," + point.y));
     }
 }

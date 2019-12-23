@@ -7,10 +7,6 @@ import java.util.stream.Stream;
 
 public class Main {
 
-    /*
-    ArrayLists are the best approach, at least in part 1.
-     */
-
     private final int DECK_SIZE = 10007;
     private List<Integer> cards;
 
@@ -91,7 +87,5 @@ public class Main {
             cards.add(i);
         }
     }
-
     private void printStack() { System.out.println(cards); }
-
 }

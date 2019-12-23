@@ -87,5 +87,4 @@ public class Main {
             cards.add(i);
         }
     }
-    private void printStack() { System.out.println(cards); }
 }

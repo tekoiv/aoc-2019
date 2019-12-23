@@ -2,8 +2,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
+    static List<Integer> outputList = new ArrayList<>();
     //refactored intCodeComputer from puzzle 5
     static void runProgram(ArrayList<StringBuilder> input, StringBuilder inputInstruction) {
         int index = 0;
@@ -11,6 +13,8 @@ public class Main {
         char modeOne, modeTwo, modeThree;
         StringBuilder firstParameter;
         StringBuilder secondParameter;
+        List<Integer> springCodeAsASCII = convertSpringCodeToASCII();
+        int instructionIndex = 0;
         while (!input.get(index).toString().equals("99")) {
             StringBuilder opCode = input.get(index);
             int fillerZeros = 0;
@@ -32,7 +36,8 @@ public class Main {
                 else {
                     i = relativeBase + Integer.parseInt(input.get(index + 1).toString());
                 }
-                input.set(i, inputInstruction);
+                input.set(i, new StringBuilder(Integer.toString(springCodeAsASCII.get(instructionIndex))));
+                instructionIndex++;
                 index += 2;
             }
             else if(opCode.substring(opCode.length() - 2).matches("04|09")) {
@@ -58,7 +63,8 @@ public class Main {
                             }
                         }
                     }
-                    System.out.println(firstParameter.substring(nonZeroIndex));
+                    //System.out.println(firstParameter.substring(nonZeroIndex));
+                    outputList.add(Integer.parseInt(firstParameter.toString()));
                 } else {
                     relativeBase += Integer.parseInt(firstParameter.toString());
                 }
@@ -148,10 +154,47 @@ public class Main {
         }
     }
 
+    static void printOutput() {
+        outputList.forEach(el -> System.out.print((char) el.intValue()));
+    }
+
+    static List<Integer> convertSpringCodeToASCII() {
+        //my spring code solution
+        //a)
+        /*
+        NOT A J //jump if next is hole
+        NOT C T //set temp register to true if third is hole
+        AND D T //set temp to true if fourth is true and temp is true
+        OR T J //jump if temp is true
+         */
+        //b)
+        /*
+        NOT A J
+        NOT C T
+        AND H T
+        OR T J
+        NOT B T
+        AND A T
+        AND C T
+        OR T J
+        AND D J
+         */
+        List<Integer> ASCIICode = new ArrayList<>();
+        List<String> springCode = List.of("NOT A J", "NOT C T", "AND D T", "OR T J", "WALK");
+        for(String s: springCode) {
+            for(int i = 0; i < s.length(); i++) {
+                ASCIICode.add((int) s.charAt(i));
+            }
+            //newline
+            ASCIICode.add(10);
+        }
+        return ASCIICode;
+    }
+
     public static void main(String[] args) {
         String input = "";
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_9.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_21.txt"));
             input = reader.readLine();
         } catch (IOException e) { System.out.println(e); }
         //input = "3,3,1105,-1,9,1101,0,0,12,4,12,99,1";
@@ -159,7 +202,7 @@ public class Main {
         StringBuilder[] sbArray = new StringBuilder[array.length];
         StringBuilder zero = new StringBuilder("0");
         ArrayList<StringBuilder> sbList = new ArrayList<>();
-        for(int i = 0; i < 2000; i++) {
+        for(int i = 0; i < 3500; i++) {
             sbList.add(zero);
         }
         for(int i = 0; i < sbArray.length; i++) {
@@ -168,5 +211,7 @@ public class Main {
         System.out.println(sbList);
 
         runProgram(sbList, new StringBuilder("0"));
+        printOutput();
+        System.out.println("Answer for 21 a): " + outputList.get(outputList.size() - 1));
     }
 }

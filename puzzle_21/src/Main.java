@@ -181,7 +181,8 @@ public class Main {
          */
         List<Integer> ASCIICode = new ArrayList<>();
         List<String> springCode = List.of("NOT A J", "NOT C T", "AND D T", "OR T J", "WALK");
-        for(String s: springCode) {
+        List<String> springCode2 = List.of("NOT A J", "NOT C T", "AND H T", "OR T J", "NOT B T", "AND A T", "AND C T", "OR T J", "AND D J", "RUN");
+        for(String s: springCode2) {
             for(int i = 0; i < s.length(); i++) {
                 ASCIICode.add((int) s.charAt(i));
             }
@@ -212,6 +213,6 @@ public class Main {
 
         runProgram(sbList, new StringBuilder("0"));
         printOutput();
-        System.out.println("Answer for 21 a): " + outputList.get(outputList.size() - 1));
+        System.out.println("Answer for 21 a) or b), check function 'convert': " + outputList.get(outputList.size() - 1));
     }
 }

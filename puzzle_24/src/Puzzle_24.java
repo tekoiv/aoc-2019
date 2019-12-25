@@ -134,6 +134,7 @@ public class Puzzle_24 {
     private void run2() {
         for(int i = 0; i < 2; i++) {
             tick(i);
+            System.out.println("Iteration " + i);
             printMap();
         }
     }
@@ -212,7 +213,7 @@ public class Puzzle_24 {
         } else {
             recursionLevels.put(0 - i - 1, initEmptyRecursionLevel());
             recursionLevels.put(i + 1, initEmptyRecursionLevel());
-            for(int iterator = 0 - i; iterator < i; iterator++) {
+            for(int iterator = 0 - i; iterator < i + 1; iterator++) {
                 Point[][] levelBelow = recursionLevels.get(iterator - 1);
                 Point[][] levelAbove = recursionLevels.get(iterator + 1);
                 Point[][] currentLevel = recursionLevels.get(iterator);
@@ -233,12 +234,13 @@ public class Puzzle_24 {
                         if(currentLevel[k][j].isInfested() && adjacentBugs == 1) tempLevel[k][j] = new Point(k, j, true);
                         else if(!currentLevel[k][j].isInfested() && (adjacentBugs == 2 || adjacentBugs == 1)) tempLevel[k][j] = new Point(k, j, true);
                         else tempLevel[k][j] = new Point(k, j, false);
-                        tempLevels.put(iterator, tempLevel);
                     }
                 }
-                tempLevels.put(0 - i - 1, initEmptyRecursionLevel());
-                tempLevels.put(i + 1, initEmptyRecursionLevel());
+                tempLevels.put(iterator, tempLevel);
             }
+            tempLevels.put(0 - i - 1, initEmptyRecursionLevel());
+            tempLevels.put(i + 1, initEmptyRecursionLevel());
+            recursionLevels = tempLevels;
         }
     }
 }

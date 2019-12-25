@@ -159,4 +159,12 @@ public class IntCodeComputer implements Runnable {
     public BlockingQueue<Long> out() {
         return out;
     }
+
+    public void send(long c) throws InterruptedException {
+        in.put(c);
+    }
+
+    public LocalTime idleTime() {
+        return this.idleSince;
+    }
 }

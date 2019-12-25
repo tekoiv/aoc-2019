@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class Puzzle_13 {
 
@@ -91,8 +94,8 @@ public class Puzzle_13 {
                         if(receiveQueue.containsKey(outputInstructions.get(0))) {
                             List<Integer> newList = receiveQueue.get(outputInstructions.get(0));
                             newList.addAll(outputInstructions);
-                            outputInstructions.clear();
                             receiveQueue.put(outputInstructions.get(0), newList);
+                            outputInstructions.clear();
                         } else {
                             receiveQueue.put(outputInstructions.get(0), outputInstructions);
                             outputInstructions.clear();
@@ -192,7 +195,7 @@ public class Puzzle_13 {
     public static void main(String[] args) {
         String input = "";
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_23.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_9.txt"));
             input = reader.readLine();
         } catch (IOException e) { System.out.println(e); }
         //input = "3,3,1105,-1,9,1101,0,0,12,4,12,99,1";
@@ -200,7 +203,7 @@ public class Puzzle_13 {
         StringBuilder[] sbArray = new StringBuilder[array.length];
         StringBuilder zero = new StringBuilder("0");
         ArrayList<StringBuilder> sbList = new ArrayList<>();
-        for(int i = 0; i < 4000; i++) {
+        for(int i = 0; i < 10000; i++) {
             sbList.add(zero);
         }
         for(int i = 0; i < sbArray.length; i++) {
@@ -208,7 +211,7 @@ public class Puzzle_13 {
         }
         System.out.println(sbList);
 
-        for(int i = 0; i < 50; i++) {
+        /*for(int i = 0; i < 50; i++) {
             int finalIteration = i;
             Runnable task = () -> {
                 System.out.println(Thread.currentThread().getName());
@@ -216,9 +219,15 @@ public class Puzzle_13 {
             };
             Thread thread = new Thread(task);
             thread.start();
-        }
-
-        runProgram(sbList, new StringBuilder("0"));
+        }*/
+        ArrayBlockingQueue<Long> in = new ArrayBlockingQueue<>(10000);
+        ArrayBlockingQueue<Long> out = new ArrayBlockingQueue<>(10000);
+        try {
+            in.put(2L);
+        } catch (InterruptedException e) { e.printStackTrace(); }
+        IntCodeComputer computer = new IntCodeComputer(input, in, out);
+        computer.run();
+        System.out.println(computer.out());
     }
 }
 

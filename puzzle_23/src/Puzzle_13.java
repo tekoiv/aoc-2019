@@ -2,11 +2,21 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Puzzle_13 {
+
+    static Map<Integer, List<Integer>> receiveQueue = new HashMap<>();
+
     //refactored intCodeComputer from puzzle 5
     static void runProgram(ArrayList<StringBuilder> input, StringBuilder inputInstruction) {
+        int computerID = Integer.parseInt(inputInstruction.toString());
+        List<Integer> outputInstructions = new ArrayList<>();
         int index = 0;
+        boolean isFirst = true;
+        int queueIndex = 1;
         int relativeBase = 0;
         char modeOne, modeTwo, modeThree;
         StringBuilder firstParameter;
@@ -32,7 +42,24 @@ public class Puzzle_13 {
                 else {
                     i = relativeBase + Integer.parseInt(input.get(index + 1).toString());
                 }
-                input.set(i, inputInstruction);
+                //check input queue
+                if(isFirst) {
+                    input.set(i, inputInstruction);
+                    isFirst = false;
+                }
+                 else {
+                     if(receiveQueue.containsKey(computerID)) {
+                         input.set(i, new StringBuilder(receiveQueue.get(computerID).get(queueIndex)));
+                         queueIndex++;
+                         if(queueIndex == 3) {
+                             queueIndex = 1;
+                             List<Integer> newList = receiveQueue.get(computerID).subList(3, receiveQueue.get(computerID).size() - 1);
+                             receiveQueue.put(computerID, newList);
+                         }
+                     } else {
+                         input.set(i, new StringBuilder("-1"));
+                     }
+                }
                 index += 2;
             }
             else if(opCode.substring(opCode.length() - 2).matches("04|09")) {
@@ -58,7 +85,21 @@ public class Puzzle_13 {
                             }
                         }
                     }
-                    System.out.println(firstParameter.substring(nonZeroIndex));
+                    //System.out.println(firstParameter.substring(nonZeroIndex));
+                    if(outputInstructions.size() == 2) {
+                        outputInstructions.add(Integer.parseInt(firstParameter.substring(nonZeroIndex)));
+                        if(receiveQueue.containsKey(outputInstructions.get(0))) {
+                            List<Integer> newList = receiveQueue.get(outputInstructions.get(0));
+                            newList.addAll(outputInstructions);
+                            outputInstructions.clear();
+                            receiveQueue.put(outputInstructions.get(0), newList);
+                        } else {
+                            receiveQueue.put(outputInstructions.get(0), outputInstructions);
+                            outputInstructions.clear();
+                        }
+                    } else {
+                        outputInstructions.add(Integer.parseInt(firstParameter.substring(nonZeroIndex)));
+                    }
                 } else {
                     relativeBase += Integer.parseInt(firstParameter.toString());
                 }
@@ -151,7 +192,7 @@ public class Puzzle_13 {
     public static void main(String[] args) {
         String input = "";
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_9.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_23.txt"));
             input = reader.readLine();
         } catch (IOException e) { System.out.println(e); }
         //input = "3,3,1105,-1,9,1101,0,0,12,4,12,99,1";
@@ -159,13 +200,23 @@ public class Puzzle_13 {
         StringBuilder[] sbArray = new StringBuilder[array.length];
         StringBuilder zero = new StringBuilder("0");
         ArrayList<StringBuilder> sbList = new ArrayList<>();
-        for(int i = 0; i < 2000; i++) {
+        for(int i = 0; i < 4000; i++) {
             sbList.add(zero);
         }
         for(int i = 0; i < sbArray.length; i++) {
             sbList.set(i, new StringBuilder(array[i]));
         }
         System.out.println(sbList);
+
+        for(int i = 0; i < 50; i++) {
+            int finalIteration = i;
+            Runnable task = () -> {
+                System.out.println(Thread.currentThread().getName());
+                runProgram((ArrayList<StringBuilder>) sbList.clone(), new StringBuilder(Integer.toString(finalIteration)));
+            };
+            Thread thread = new Thread(task);
+            thread.start();
+        }
 
         runProgram(sbList, new StringBuilder("0"));
     }

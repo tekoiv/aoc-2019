@@ -132,6 +132,7 @@ public class Puzzle_24 {
     }
 
     private void run2() {
+        System.out.println(normalBugs(recursionLevels.get(0), 0, 1));
         for(int i = 0; i < 2; i++) {
             tick(i);
             System.out.println("Iteration " + i);
@@ -181,11 +182,11 @@ public class Puzzle_24 {
             }
         } else if(x == 1 && y == 2) {
             for(int i = 0; i < 5; i++) {
-                if(levelBelow[1][i].isInfested()) adjacentBugs++;
+                if(levelBelow[0][i].isInfested()) adjacentBugs++;
             }
         } else if(x == 3 && y == 2) {
             for(int i = 0; i < 5; i++) {
-                if(levelBelow[3][i].isInfested()) adjacentBugs++;
+                if(levelBelow[4][i].isInfested()) adjacentBugs++;
             }
         } else System.out.println("This shouldn't happen.");
         return adjacentBugs;
@@ -193,15 +194,15 @@ public class Puzzle_24 {
 
     private int normalBugs(Point[][] currentLevel, int x, int y) {
         int adjacentBugs = 0;
-        if(x - 1 >= 0) if(currentLevel[x - 1][y].isInfested() && isNotCenter(x - 1, y)) adjacentBugs++;
-        if(x + 1 < 5) if(currentLevel[x + 1][y].isInfested() && isNotCenter(x + 1, y)) adjacentBugs++;
-        if(y - 1 >= 0) if(currentLevel[x][y - 1].isInfested() && isNotCenter(x, y - 1)) adjacentBugs++;
-        if(y + 1 < 5) if(currentLevel[x][y + 1].isInfested() && isNotCenter(x, y + 1)) adjacentBugs++;
+        if(x - 1 >= 0) if(currentLevel[x - 1][y].isInfested() && !isCenter(x - 1, y)) adjacentBugs++;
+        if(x + 1 < 5) if(currentLevel[x + 1][y].isInfested() && !isCenter(x + 1, y)) adjacentBugs++;
+        if(y - 1 >= 0) if(currentLevel[x][y - 1].isInfested() && !isCenter(x, y - 1)) adjacentBugs++;
+        if(y + 1 < 5) if(currentLevel[x][y + 1].isInfested() && !isCenter(x, y + 1)) adjacentBugs++;
         return adjacentBugs;
     }
 
-    private boolean isNotCenter(int x, int y) {
-        return x != 2 && y != 2;
+    private boolean isCenter(int x, int y) {
+        return (x==2 && y == 2);
     }
 
     private void tick(int i) {
@@ -231,7 +232,8 @@ public class Puzzle_24 {
                             adjacentBugs += innerCornerAdjacent(levelBelow, k, j);
                         }
                         adjacentBugs += normalBugs(currentLevel, k, j);
-                        if(currentLevel[k][j].isInfested() && adjacentBugs == 1) tempLevel[k][j] = new Point(k, j, true);
+                        if(isCenter(k, j)) tempLevel[k][j] = new Point(2, 2, false);
+                        else if(currentLevel[k][j].isInfested() && adjacentBugs == 1) tempLevel[k][j] = new Point(k, j, true);
                         else if(!currentLevel[k][j].isInfested() && (adjacentBugs == 2 || adjacentBugs == 1)) tempLevel[k][j] = new Point(k, j, true);
                         else tempLevel[k][j] = new Point(k, j, false);
                     }

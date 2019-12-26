@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 public class IntCodeComputer implements Runnable {
 
@@ -94,6 +95,7 @@ public class IntCodeComputer implements Runnable {
                     }
                     pc += 2;
                 } else if(opCode == 4) {
+                    System.out.print((char) load(modes[0]).intValue());
                     out.put(load(modes[0]));
                     pc += 2;
                 } else if(opCode == 9) {

@@ -20,12 +20,7 @@ public class Puzzle_24 {
                 nextLine = reader.readLine();
             }
         } catch (IOException e) { e.printStackTrace(); }
-        String test = "....#\n" +
-                "#..#.\n" +
-                "#..##\n" +
-                "..#..\n" +
-                "#....";
-        Puzzle_24 puzzle = new Puzzle_24(test);
+        Puzzle_24 puzzle = new Puzzle_24(input.toString());
         //puzzle.run();
         puzzle.run2();
 
@@ -131,13 +126,28 @@ public class Puzzle_24 {
         return emptyLevel;
     }
 
+    private int countBugs(Point[][] level) {
+        int bugCounter = 0;
+        for(int i = 0; i < 5; i++) {
+            for(int j = 0; j < 5; j++) {
+                if(level[j][i].isInfested()) bugCounter++;
+            }
+        }
+        return bugCounter;
+    }
+
     private void run2() {
         System.out.println(normalBugs(recursionLevels.get(0), 0, 1));
-        for(int i = 0; i < 2; i++) {
+        for(int i = 0; i < TIME + 1; i++) {
             tick(i);
             System.out.println("Iteration " + i);
             printMap();
         }
+        int totalBugs = 0;
+        for(int i: recursionLevels.keySet()) {
+            totalBugs += countBugs(recursionLevels.get(i));
+        }
+        System.out.println("Total bugs after 200 iterations: " + totalBugs);
     }
 
     private int outerCornerAdjacent(Point[][] levelAbove, int x, int y) {

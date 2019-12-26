@@ -2,6 +2,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -65,7 +66,7 @@ public class IntCodeComputer implements Runnable {
         this.out = new ArrayBlockingQueue<>(10_000);
     }
 
-    //concurrent implementation. the intcode computer
+    //concurrent implementation. the int code computer
     //can wait for input instructions, be halted
     //or running normally.
     public void run() {
@@ -79,8 +80,11 @@ public class IntCodeComputer implements Runnable {
                 modes[1] = getParam(command, 2);
                 modes[2] = getParam(command, 3);
                 if(opCode == 3) {
+                    System.out.println("Input");
                     status = Status.WAITING;
-                    //read from blockQueue
+                    Scanner sc = new Scanner(System.in);
+                    String nextValue = sc.nextLine();
+                    in.put(stringToASCII(nextValue));
                     Long value = read();
                     write(modes[0], value);
                     if(value != -1) {
@@ -117,11 +121,21 @@ public class IntCodeComputer implements Runnable {
                 } else if(opCode == 8) {
                     write(modes[2], load(modes[0]).equals(load(modes[1])) ? 1L : 0L);
                     pc += 4;
-                }
+                } else System.out.println("This shouldn't happen.");
             }
         } catch (InterruptedException e) { e.printStackTrace(); } finally {
             status = Status.STOPPED;
         }
+    }
+
+    private Long stringToASCII(String input) {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < input.length(); i++) {
+            sb.append((int) input.charAt(i));
+        }
+        sb.append(10);
+        System.out.println(Long.parseLong(sb.toString()));
+        return Long.parseLong(sb.toString());
     }
 
     private Long read() {

@@ -6,11 +6,10 @@ import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 
 public class IntCodeComputer implements Runnable {
 
-    //important to keep the intcode computer
+    //important to keep the int code computer
     //ready for incoming input.
     //concurrency.
     public enum Status {
@@ -80,11 +79,15 @@ public class IntCodeComputer implements Runnable {
                 modes[1] = getParam(command, 2);
                 modes[2] = getParam(command, 3);
                 if(opCode == 3) {
-                    System.out.println("Input");
                     status = Status.WAITING;
-                    Scanner sc = new Scanner(System.in);
-                    String nextValue = sc.nextLine();
-                    in.put(stringToASCII(nextValue));
+                    if(in.isEmpty()) {
+                        Scanner sc = new Scanner(System.in);
+                        String nextValue = sc.nextLine();
+                        for(int i = 0; i < nextValue.length(); i++) {
+                            in.put((long) nextValue.charAt(i));
+                        }
+                        in.put(10L);
+                    }
                     Long value = read();
                     write(modes[0], value);
                     if(value != -1) {

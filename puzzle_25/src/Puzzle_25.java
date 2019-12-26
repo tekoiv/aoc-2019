@@ -10,7 +10,12 @@ public class Puzzle_25 {
     private BlockingQueue<Long> in = new ArrayBlockingQueue<>(10_000);
     private BlockingQueue<Long> out = new ArrayBlockingQueue<>(10_000);
 
-    public static void main(String[] args) throws InterruptedException {
+    /*
+    You can play this by giving instructions :) The instructions are limited to:
+    east, north, west, south, take <item>, inv.
+     */
+
+    public static void main(String[] args) {
         StringBuilder sb = new StringBuilder();
         try {
             BufferedReader reader = new BufferedReader(new FileReader("../inputs/input_25.txt"));
@@ -24,9 +29,7 @@ public class Puzzle_25 {
         this.input = input;
     }
 
-    private void run() throws InterruptedException {
-        long[] commands = {101097115116013010L};
-        for(long l: commands) in.put(l);
+    private void run() {
         IntCodeComputer computer = new IntCodeComputer(input, in, out);
         computer.run();
     }
